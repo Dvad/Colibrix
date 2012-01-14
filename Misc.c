@@ -1,5 +1,5 @@
-#include <C:\CSD\workspace\helloworld-oabi\src\sbus.h>
-#include <C:\CSD\workspace\helloworld-oabi\src\Misc.h>
+//#include "sbus.h"
+#include "Misc.h"
 #include <stdio.h>
 #include <fcntl.h> // to add non blocking flag to read input
 #include <sys/time.h>
@@ -17,7 +17,7 @@ int lastUsElapsed2;
 int lastUsElapsed3;
 int timer;
 
-int us, dt; // Variables prédéclarés pour éviter l'allocation uniquement
+int us, dt; // Variables prï¿½dï¿½clarï¿½s pour ï¿½viter l'allocation uniquement
 
 void Misc_Initialise() {
 	tv.tv_sec = 0;
@@ -61,7 +61,7 @@ float Misc_Abs(float value) {
 int UMisc_GetTimerUs() {
 
 	gettimeofday(&tv, NULL);
-	us = tv.tv_usec; // Renvoie les us de la seconde en cours (retombe donc à zéro toutes les secondes !
+	us = tv.tv_usec; // Renvoie les us de la seconde en cours (retombe donc ï¿½ zï¿½ro toutes les secondes !
 	dt = us - lastUsTimer;
 	lastUsTimer = us;
 	if (dt < 0) {
@@ -74,7 +74,7 @@ int UMisc_GetTimerUs() {
 int UMisc_GetElapsedUs() {
 	
 	gettimeofday(&tv, NULL);
-	us = tv.tv_usec; // Renvoie les us de la seconde en cours (retombe donc à zéro toutes les secondes !
+	us = tv.tv_usec; // Renvoie les us de la seconde en cours (retombe donc ï¿½ zï¿½ro toutes les secondes !
 	dt = us - lastUsElapsed;
 		
 		if (-200 * 1000 < dt && dt < 0) {
@@ -82,7 +82,7 @@ int UMisc_GetElapsedUs() {
 			//---On recommence
 			printf("E");
 			gettimeofday(&tv, NULL);
-			us = tv.tv_usec; // Renvoie les us de la seconde en cours (retombe donc à zéro toutes les secondes !
+			us = tv.tv_usec; // Renvoie les us de la seconde en cours (retombe donc ï¿½ zï¿½ro toutes les secondes !
 			dt = us - lastUsElapsed;
 
 			
@@ -100,7 +100,7 @@ int UMisc_GetElapsedUs() {
 int UMisc_GetElapsedUs2() {
 	
 	gettimeofday(&tv, NULL);
-	us = tv.tv_usec; // Renvoie les us de la seconde en cours (retombe donc à zéro toutes les secondes !
+	us = tv.tv_usec; // Renvoie les us de la seconde en cours (retombe donc ï¿½ zï¿½ro toutes les secondes !
 	dt = us - lastUsElapsed2;
 	lastUsElapsed2 = us;
 	
@@ -109,7 +109,7 @@ int UMisc_GetElapsedUs2() {
 		//---On recommence
 		printf("E");
 		gettimeofday(&tv, NULL);
-		us = tv.tv_usec; // Renvoie les us de la seconde en cours (retombe donc à zéro toutes les secondes !
+		us = tv.tv_usec; // Renvoie les us de la seconde en cours (retombe donc ï¿½ zï¿½ro toutes les secondes !
 		dt = us - lastUsElapsed2;
 	}
 	if (dt < 0) {
@@ -121,7 +121,7 @@ int UMisc_GetElapsedUs2() {
 int UMisc_GetElapsedUs3() {
 	
 	gettimeofday(&tv, NULL);
-	us = tv.tv_usec; // Renvoie les us de la seconde en cours (retombe donc à zéro toutes les secondes !
+	us = tv.tv_usec; // Renvoie les us de la seconde en cours (retombe donc ï¿½ zï¿½ro toutes les secondes !
 	dt = us - lastUsElapsed3;
 	lastUsElapsed3 = us;
 	if (dt < 0) {
@@ -131,48 +131,6 @@ int UMisc_GetElapsedUs3() {
 }
 
 
-
-void Misc_SetGrnLed(int state) {
-	if (state) {
-		// Green led on
-		sbuslock();
-		sbus_poke16(0x62, sbus_peek16(0x62) | 0x8000);
-		sbusunlock();
-	} else {
-		// Green led off
-		sbuslock();
-		sbus_poke16(0x62, sbus_peek16(0x62) & ~(0x8000));
-		sbusunlock();
-	}
-}
-
-void Misc_SetRedLed(int state) {
-	if (state) {
-		// Red led on
-		sbuslock();
-		sbus_poke16(0x62, sbus_peek16(0x62) | 0x4000);
-		sbusunlock();
-	} else {
-		// Red led off
-		sbuslock();
-		sbus_poke16(0x62, sbus_peek16(0x62) & ~(0x4000));
-		sbusunlock();
-	}
-}
-
-void Misc_TglGrnLed()
-{
-	sbuslock();
-	sbus_poke16(0x62, sbus_peek16(0x62) ^ 0x8000); // Tgl green led
-	sbusunlock();
-}
-
-void Misc_TglRedLed()
-{
-	sbuslock();
-	sbus_poke16(0x62, sbus_peek16(0x62) ^ 0x4000); // Tgl red led
-	sbusunlock();
-}
 
 
 int askIntValue(const char* theValueName) {
@@ -210,7 +168,7 @@ float askFloatValue(const char* theValueName) {
 }
 
 void Misc_WaitEnter() {
-	printf("Appuyer sur entrée pour poursuivre...\n");
+	printf("Appuyer sur entrï¿½e pour poursuivre...\n");
 	fflush(stdout);
 
 	char *cptr;
@@ -226,7 +184,7 @@ void Misc_WaitEnter() {
 //
 // Fonction kbhit()
 //
-// Retourne 1 si des données sont dispo sur le stream
+// Retourne 1 si des donnï¿½es sont dispo sur le stream
 // Retourne 0 sinon
 //
 // Permet d'utiliser la fonction read() en non bloquant !
@@ -241,37 +199,37 @@ int Misc_HasData(STDIN_FILENO)
 
 void Misc_PrintHelp() {
 	printf("Commandes disponibles:\n");
-	printf("  Gestion d'état:\n");
+	printf("  Gestion d'ï¿½tat:\n");
 	printf("    w: Clear\n");
 	printf("    x: Initialisation\n");
 	printf("    c: Rotation\n");
-	printf("    v: Décollage\n");
+	printf("    v: Dï¿½collage\n");
 	printf("    b: Atterissage\n");
-	printf("  Réglages manuels:\n");
+	printf("  Rï¿½glages manuels:\n");
 	printf("    z/s: Tangage\n");
 	printf("    q/d: Roulis\n");
 	printf("    a/e: Lacet\n");
 	printf("    r/f: Altitude\n");
-	printf("    p/m: Réglage de Vequi\n");
-	printf("    $/*: Réglage de l'altitude après décollage\n");
+	printf("    p/m: Rï¿½glage de Vequi\n");
+	printf("    $/*: Rï¿½glage de l'altitude aprï¿½s dï¿½collage\n");
 	printf("  Divers:\n");
-	printf("    y: Active/désactive le sonar\n");
+	printf("    y: Active/dï¿½sactive le sonar\n");
 	printf("    u: Buffer centrale\n");
 	printf("    j: Mode I2C\n");
 	printf("    n: Affichage\n");
-	printf("    i: Infos fréquences\n");
+	printf("    i: Infos frï¿½quences\n");
 	printf("    l: Gains PID\n");
 	printf("    h: Affiche l'aide\n");
 	printf("    k: Termine le programme\n");
 	printf("   [espace]: Arret d'urgence\n");
-	printf("   set {l/r/t/a}{p/i/d}: Réglage d'un gain\n");
+	printf("   set {l/r/t/a}{p/i/d}: Rï¿½glage d'un gain\n");
 	printf("Fin des commandes disponibles\n");
 	fflush(stdout);
 }
 
 //---------------------------------------------------------------------------------
 //
-//               Code inutilisé
+//               Code inutilisï¿½
 //
 //
 //
@@ -299,10 +257,10 @@ void Misc_PrintHelp() {
 /*
  void getDoubleFromBytesDemo() {
  //
- // Démonstration de comment transformer un double en octets
+ // Dï¿½monstration de comment transformer un double en octets
  // puis a nouveau en double grace a memcpy et des pointeurs
  //
- double d = 1.0; // Le double de départ
+ double d = 1.0; // Le double de dï¿½part
  char bytes[8]; // Les 64 bits pour stocker le double
 
  memcpy((void*)bytes, (void*)&d, sizeof(bytes));

@@ -1,6 +1,6 @@
-#include <C:\CSD\workspace\helloworld-oabi\src\Params.h>
-#include <C:\CSD\workspace\helloworld-oabi\src\Misc.h>
-#include <C:\CSD\workspace\helloworld-oabi\src\Sonar.h>
+#include "Params.h"
+#include "Misc.h"
+#include "Sonar.h"
 #include <errno.h> // gestion minimale des erreurs
 #include <fcntl.h> // Pour le flag NON_BLOCK
 #include <stdio.h>

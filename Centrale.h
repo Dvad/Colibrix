@@ -6,5 +6,5 @@ void Centrale_Termine();
 void Centrale_CheckData();
 void Centrale_RAZAttitude();
 void Centrale_RAZPosition();
-
+void RAZBaro();
 #endif /*CENTRALE_H_*/

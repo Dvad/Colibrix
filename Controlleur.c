@@ -1,5 +1,5 @@
-#include <C:\CSD\workspace\helloworld-oabi\src\Misc.h>
-#include <C:\CSD\workspace\helloworld-oabi\src\Params.h>
+#include "Misc.h"
+#include "Params.h"
 #include <stdio.h>
 #include <assert.h>
 #include <fcntl.h>

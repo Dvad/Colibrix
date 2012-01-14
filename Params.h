@@ -106,6 +106,7 @@ float IntervalleTemps; // L'intervalle de temps entre la trame actuelle et la pr
 float VEqui;           // La commande moteur d'équilibre
 float Vactu;
 int state;
+float AltitudeBaro;
 
 int trameRate;
 int MAX_WAIT_BEF_SEND;
@@ -116,6 +117,7 @@ int SONAR_IRQ;
 int CENTRALE_IRQ;
 
 int DUREE_MOYENNAGE_ALTITUDE;
+int DUREE_MOYENNAGE_BARO;
 
 //
 // Paramètres

@@ -1,14 +1,17 @@
-#include <C:\CSD\workspace\helloworld-oabi\src\Centrale.h>
-#include <C:\CSD\workspace\helloworld-oabi\src\Params.h>
-#include <C:\CSD\workspace\helloworld-oabi\src\Maths.h>
-#include <C:\CSD\workspace\helloworld-oabi\src\Misc.h>
+#include "Centrale.h"
+#include "Params.h"
+#include "Maths.h"
+#include "Misc.h"
 #include <errno.h> // gestion minimale des erreurs
 #include <fcntl.h> // Pour le flag NON_BLOCK
 #include <stdio.h>
+#include <math.h>
+
+typedef unsigned int size_t;
 
 void readFrame();
 char *strerror(int errnum);
-void *memcpy(void *dest, const void *src, size_t n);
+void *memcpy(void *dest, const void *src, size_t n); //avant int Ã©tait size_t
 void close(int id);
 int system(const char *string);
 float getFloatAtOffset(int offset);
@@ -27,7 +30,7 @@ int indexEcritureCentrale;
 int estInitialiseCentrale;
 
 //
-// Variables prédéclarés pour éviter les temps d'allocation, elles sont initialisé avant chaque utilisation
+// Variables prï¿½dï¿½clarï¿½s pour ï¿½viter les temps d'allocation, elles sont initialisï¿½ avant chaque utilisation
 //
 int j;
 double tempDouble;
@@ -38,7 +41,7 @@ int donneesDisponibles;
 
 float tempsPic;
 float ancTempsPic;
-float ancLRT[3]; // Anciens angles pour obtention de la vitesse par dérivation
+float ancLRT[3]; // Anciens angles pour obtention de la vitesse par dï¿½rivation
 float ancVitLRT[3];
 float insVitLRT[3];
 float zeroPosLRT[3];
@@ -47,13 +50,14 @@ float zeroPosLRT[3];
 //float PosGPS[3];
 //float zeroPosGPS[3];
 //float TempsGPS;
-/*//--Baro
+
+//--Baro
  int indexHistBaro;
  float *histAltBaro;
  float lastBaro;
  float zeroBaro;
  float AltitudeBaro;
- */
+ 
 
 
 
@@ -64,7 +68,7 @@ float zeroPosLRT[3];
 
 void Centrale_Initialise(int dev) {
 
-	printf("Création serveur centrale...\n");
+	printf("Crï¿½ation serveur centrale...\n");
 
 	// IRQ: 29: XUART
 	// IRQ: 30: CAN
@@ -88,7 +92,7 @@ void Centrale_Initialise(int dev) {
 	usleep(100 * 1000);
 
 	if (dev == -1) { // Laisser l'utilisateur choisir
-		dev = askIntValue("Numéro device ci dessus");
+		dev = askIntValue("Numï¿½ro device ci dessus");
 	}
 	
 	char* adresse;
@@ -117,6 +121,10 @@ void Centrale_Initialise(int dev) {
 	recherchesCentrale = 0;
 	erreursCentrale = 0;
 	estInitialiseCentrale = 1;
+	
+	//BARO
+	indexHistBaro=0;
+	zeroBaro=0;
 	
 	for(i = 0; i < 3; i++) {
 		ancVitLRT[i] = 0;
@@ -147,12 +155,12 @@ void Centrale_RAZPosition() {
 }
 */
 
-//void RAZBaro() {
-//	zeroBaro = AltitudeBaro + zeroBaro;
-//}
+void RAZBaro() {
+	zeroBaro = AltitudeBaro + zeroBaro;
+}
 
 //
-// Lit les données, et si une trame est disponible l'utilise et met "NouvelleTrameCentrale" à 1.
+// Lit les donnï¿½es, et si une trame est disponible l'utilise et met "NouvelleTrameCentrale" ï¿½ 1.
 //
 void Centrale_CheckData(int useData) {
 	
@@ -172,9 +180,9 @@ void Centrale_CheckData(int useData) {
 		return;
 	}
 		
-	if (ret<0 && ret != EAGAIN && errno != 11) { // errno==11 correspond a "ressource indisponible" = pas de données !
+	if (ret<0 && ret != EAGAIN && errno != 11) { // errno==11 correspond a "ressource indisponible" = pas de donnï¿½es !
 		//
-		// ERREUR GRAVE - Gestion à faire
+		// ERREUR GRAVE - Gestion ï¿½ faire
 		//
 		printf("\nERREUR LECTURE CENTRALE: %s (errno=%i)\n", strerror(errno),
 				errno);
@@ -183,7 +191,7 @@ void Centrale_CheckData(int useData) {
 		//abort();
 	} else if (ret==EAGAIN) {
 		//
-		// Pas de données, pas grave on retourne
+		// Pas de donnï¿½es, pas grave on retourne
 		//
 		if(debug)printf("_NODATA_");
 
@@ -193,7 +201,7 @@ void Centrale_CheckData(int useData) {
 				printf("_OVERFLOW_");
 			} else if (ret > CENTRALE_TAILLE_TRAME) {
 				printf("+%i ", ret - CENTRALE_TAILLE_TRAME);
-				//	printf("\nCENTRALE: Il reste des données !\n");
+				//	printf("\nCENTRALE: Il reste des donnï¿½es !\n");
 				//	Misc_SetRedLed(1);
 			} else if (ret == CENTRALE_TAILLE_TRAME) {
 				
@@ -215,7 +223,7 @@ void Centrale_CheckData(int useData) {
 		
 		
 		//
-		// On a des données
+		// On a des donnï¿½es
 		//
 		//--Etape 1: Recopions les dans bufferCircuCentrale
 		if(ret > 0) {
@@ -226,7 +234,7 @@ void Centrale_CheckData(int useData) {
 					indexEcritureCentrale = 0;
 				}
 		}
-		//--Etape 2: Calculons le nombre de données disponibles
+		//--Etape 2: Calculons le nombre de donnï¿½es disponibles
 		donneesDisponibles = indexEcritureCentrale - indexLectureCentrale;
 		if (donneesDisponibles < 0)
 			donneesDisponibles += CENTRALE_TAILLE_BUFFER;
@@ -242,15 +250,15 @@ void Centrale_CheckData(int useData) {
 							== 1 // Next frame type
 			) {
 				
-				//--Début d'une trame
+				//--Dï¿½but d'une trame
 				readFrame();
 				freqCentrale++;
-				indexLectureCentrale += CENTRALE_TAILLE_TRAME; // Avançons l'index d'une trame	
+				indexLectureCentrale += CENTRALE_TAILLE_TRAME; // Avanï¿½ons l'index d'une trame	
 				
 				if(debug)printf("T");
 			} else {
-				//--Pas le début d'une trame
-				indexLectureCentrale++; // Avançons l'index d'un cran pour trouver le début
+				//--Pas le dï¿½but d'une trame
+				indexLectureCentrale++; // Avanï¿½ons l'index d'un cran pour trouver le dï¿½but
 				recherchesCentrale++;
 				
 			}
@@ -262,14 +270,14 @@ void Centrale_CheckData(int useData) {
 				indexLectureCentrale -= CENTRALE_TAILLE_BUFFER;
 			}
 
-			if (0 && NouvelleTrameCentrale) { // La présence du zéro force a aller jusqu'au bout
-											  // Et donc de prendre la derniere trame si on récupére 2 d'un coup
+			if (0 && NouvelleTrameCentrale) { // La prï¿½sence du zï¿½ro force a aller jusqu'au bout
+											  // Et donc de prendre la derniere trame si on rï¿½cupï¿½re 2 d'un coup
 
 				// Arretons ici la boucle
 				donneesDisponibles = - 1;
 
 			} else {
-				// Recalculons le nombre de données disponibles
+				// Recalculons le nombre de donnï¿½es disponibles
 				donneesDisponibles = indexEcritureCentrale
 						- indexLectureCentrale;
 				if (donneesDisponibles < 0) {
@@ -278,7 +286,7 @@ void Centrale_CheckData(int useData) {
 			}
 
 		} // WHILE il y a de quoi faire une trame
-	} // If il y avait des données
+	} // If il y avait des donnï¿½es
 } // Fin de la fonction
 
 
@@ -313,7 +321,7 @@ void readFrame() {
 	}
 
 	if (!passesCheckSum) {
-		printf("\nWARNING: CENTRALE: check sum raté !");
+		printf("\nWARNING: CENTRALE: check sum ratï¿½ !");
 		erreursCentrale++;
 		return;
 	}
@@ -329,11 +337,11 @@ void readFrame() {
 	
 
 	//
-	// Vérifions si des trames ont été ratées
+	// Vï¿½rifions si des trames ont ï¿½tï¿½ ratï¿½es
 	//
-	if (0 && IntervalleTemps > 1.5F / 102.0F) { // Intervalle théorique: 1/102
+	if (0 && IntervalleTemps > 1.5F / 102.0F) { // Intervalle thï¿½orique: 1/102
 		
-		//--Oui, déterminons le nombre de trames ratées
+		//--Oui, dï¿½terminons le nombre de trames ratï¿½es
 		int COMPTAGE_MAXI = 50;
 		int nbTramesRatees;
 		for(nbTramesRatees = 1; nbTramesRatees < COMPTAGE_MAXI; nbTramesRatees++) {
@@ -344,26 +352,26 @@ void readFrame() {
 		
 		if (1) { // Affiche les warnings pour manque de trames ?
 			if (nbTramesRatees >= 2 && nbTramesRatees != COMPTAGE_MAXI - 1) {
-				printf("\nWARNING: CENTRALE: Raté %i trames d'un coup !",
+				printf("\nWARNING: CENTRALE: Ratï¿½ %i trames d'un coup !",
 						nbTramesRatees);
 			} else if (nbTramesRatees == COMPTAGE_MAXI) {
-				printf("\nWARNING: CENTRALE: Raté plus de %i trames !",
+				printf("\nWARNING: CENTRALE: Ratï¿½ plus de %i trames !",
 						COMPTAGE_MAXI - 1);
 			}
 		}
 		
 		//printf("\nWARNING: CENTRALE: Intervalle entre trames trop long  : dt=%fms\n", 1000 * IntervalleTemps);
 		erreursCentrale += nbTramesRatees;
-		trameRate = 1; // Si oui ou non il y a eu des trames ratés ce tour ci
+		trameRate = 1; // Si oui ou non il y a eu des trames ratï¿½s ce tour ci
 	} else {
 		trameRate = 0;
 	}
 	
 	if (0) {
-		if (IntervalleTemps > 1.5F / 102.0F) { // Raté plus de deux trames
+		if (IntervalleTemps > 1.5F / 102.0F) { // Ratï¿½ plus de deux trames
 			IntervalleTemps = 2.0F / 102.0F;
 		} else {
-			IntervalleTemps = 1.0F / 102.0F; //-----------------------Assez débile comme méthode !
+			IntervalleTemps = 1.0F / 102.0F; //-----------------------Assez dï¿½bile comme mï¿½thode !
 		}
 	}
 
@@ -378,10 +386,10 @@ void readFrame() {
 		//--Recentrage
 		PosLRTA[i] -= zeroPosLRT[i];
 		
-		//--Vérfication ordre de grandeur
+		//--Vï¿½rfication ordre de grandeur
 		if (PosLRTA[i] > 3.0F * PI || PosLRTA[i] < -3.0F * PI) {
 			erreursCentrale += 1;
-			printf("\nERREUR: CENTRALE: Angles hors de porté!\n");
+			printf("\nERREUR: CENTRALE: Angles hors de portï¿½!\n");
 			return;
 		}
 		
@@ -391,10 +399,10 @@ void readFrame() {
 		if (PosLRTA[i] <= -PI)
 			PosLRTA[i] += DEUX_PI;
 
-		//--Obtention de la vitesse par dérivation
+		//--Obtention de la vitesse par dï¿½rivation
 		
 		//---Vitesse actuelle
-		if(0) { // Utiliser vitese instantanée
+		if(0) { // Utiliser vitese instantanï¿½e
 			VitLRTA[i] = 0.5F * (PosLRTA[i] - ancLRT[i]) / IntervalleTemps;
 		} else {
 			ancVitLRT[i] = insVitLRT[i];
@@ -405,7 +413,7 @@ void readFrame() {
 	}
 
 	//
-	// Accéléros
+	// Accï¿½lï¿½ros
 	//
 	/*
 	 for (i = 0; i < 3; i++) {
@@ -418,9 +426,9 @@ void readFrame() {
 	//--Baro
 	//
 	/*
-	 long tempLong = 265L * bufferCircuCentrale[(indexLectureCentrale + 162) % CIRCULAR_BUFFER_SIZE];
-	 tempLong += bufferCircuCentrale[(indexLectureCentrale + 162 + 1) % CIRCULAR_BUFFER_SIZE];
-	 histAltBaro[indexHistBaro] = 44330.7692308 * (1 - Math.Pow(((((float)tempLong) / 10) / 1013.25), 0.1901976));
+	 long tempLong = 265L * bufferCircuCentrale[(indexLectureCentrale + 162) % CENTRALE_TAILLE_BUFFER];
+	 tempLong += bufferCircuCentrale[(indexLectureCentrale + 162 + 1) % CENTRALE_TAILLE_BUFFER];
+	 histAltBaro[indexHistBaro] = 44330.7692308 * (1 - pow(((((float)tempLong) / 10) / 1013.25), 0.1901976));
 	 lastBaro = histAltBaro[indexHistBaro];
 	 indexHistBaro++;
 	 if (indexHistBaro == DUREE_MOYENNAGE_BARO)
@@ -475,9 +483,9 @@ void readFrame() {
 
 float getFloatAtOffset(int offset) {
 	//
-	// Optimisation: rajouter au pointeur dans le memcpy plutot que de copier des données !!!!
+	// Optimisation: rajouter au pointeur dans le memcpy plutot que de copier des donnï¿½es !!!!
 
-	// 2 difficultés a traiter ici:
+	// 2 difficultï¿½s a traiter ici:
 	// -> Il faut placer les 4 derniers octets en premiers en gardant leur ordre et sans inverser les bits !
 	// -> On est dans un buffer circulaire, attention aux indices trop grand..
 
@@ -491,12 +499,12 @@ float getFloatAtOffset(int offset) {
 
 	/*
 	 if (indexLectureCentrale + offset + 3 < CENTRALE_TAILLE_BUFFER) {
-	 //--Les 4 premiers octets sont alignés
+	 //--Les 4 premiers octets sont alignï¿½s
 	 memcpy((void*)(&result + 4), (void*)(&bufferCircuCentrale + indexLectureCentrale
 	 + offset), 4);
 
 	 } else {
-	 // Si on n'est pas dans un bloc adjacent du buffer, on applique un modulo pour créer un tableau
+	 // Si on n'est pas dans un bloc adjacent du buffer, on applique un modulo pour crï¿½er un tableau
 	 char tempFourBytes[4];
 	 for (; i < 4; i++) {
 	 tempFourBytes[i] = bufferCircuCentrale[(indexLectureCentrale + offset + i) % CENTRALE_TAILLE_BUFFER];
@@ -505,10 +513,10 @@ float getFloatAtOffset(int offset) {
 	 }
 	 
 	 if (indexLectureCentrale + offset + 7 < CENTRALE_TAILLE_BUFFER) {
-	 // Les 4 derniers octets sont alignés
+	 // Les 4 derniers octets sont alignï¿½s
 	 memcpy((void*)(&result), (void*)(&bufferCircuCentrale + indexLectureCentrale + offset
 	 + 4), 4);
-	 } else {// Si on n'est pas dans un bloc adjacent du buffer, on applique un modulo pour créer un tableau
+	 } else {// Si on n'est pas dans un bloc adjacent du buffer, on applique un modulo pour crï¿½er un tableau
 	 char tempFourBytes[4];
 	 for (i = 0; i < 4; i++) {
 	 tempFourBytes[i] = bufferCircuCentrale[(indexLectureCentrale + offset + i + 4) % CENTRALE_TAILLE_BUFFER];

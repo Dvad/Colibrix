@@ -1,8 +1,8 @@
-#include <C:\CSD\workspace\helloworld-oabi\src\Maths.h>
-#include <stdio.h> // Pour le débug uniquement pour faire du printf
+#include "Maths.h"
+#include <stdio.h> // Pour le dï¿½bug uniquement pour faire du printf
 
 
-const float RATIO_DISCRET = 114.5916; // Constante de la discrétisation sur 180 pas
+const float RATIO_DISCRET = 114.5916; // Constante de la discrï¿½tisation sur 180 pas
 float SIN_DISCRET[181];
 
 
@@ -12,13 +12,13 @@ float SIN_DISCRET[181];
 
 void Maths_Initialise() {
 	
-	PI = 3.141593F; //Précision flottante de 7 chiffres significatifs
+	PI = 3.141593F; //Prï¿½cision flottante de 7 chiffres significatifs
 	DEUX_PI = 6.283185F;      // Idem
 	PI_SUR_DEUX = 1.570796F;  // Idem
 	 
 	
 	//
-	// Le code ci dessous est généré a partir de C#, ne pas modifier !
+	// Le code ci dessous est gï¿½nï¿½rï¿½ a partir de C#, ne pas modifier !
 	//
 	SIN_DISCRET[0] = 0.0F;
 	SIN_DISCRET[1] = 0.008726536F;
@@ -216,7 +216,7 @@ float Cos(float angleRad) {
 }
 
 //
-// L'écart maximum est de 0.43% ce qui correspond à 0.25° !
+// L'ï¿½cart maximum est de 0.43% ce qui correspond ï¿½ 0.25ï¿½ !
 // Les angles en radians doivent etre entre -Pi et Pi lors de l'appel
 float Sin(float angleRad) {
 	if (angleRad < -PI) {
