@@ -15,9 +15,9 @@
 #include <string.h>
 
 /* ANCIEN MAIN
-   // manipulation des chaînes de caractères
- #include <strings.h> // manipulation des chaînes de caractères
- // convention : les chaines de caractère se terminent par le caractère nul '\0'.
+   // manipulation des chaï¿½nes de caractï¿½res
+ #include <strings.h> // manipulation des chaï¿½nes de caractï¿½res
+ // convention : les chaines de caractï¿½re se terminent par le caractï¿½re nul '\0'.
  #include <sys/types.h>
  #include <sys/stat.h>
  #include <sys/time.h> // pour calculer le temps (gettimeofday(), struct timeval )
@@ -44,14 +44,14 @@ void videBufferSonar() {
 int main(int argc, char **argv) {
 
 	//
-	// Machine d'état
+	// Machine d'ï¿½tat
 	//
 	// int state
 	// -1: erreur
-	//  0: non initialisé
-	//  1: initialisé, pret rotation
-	//  2: rotation, pret décollage
-	//  3: décollage
+	//  0: non initialisï¿½
+	//  1: initialisï¿½, pret rotation
+	//  2: rotation, pret dï¿½collage
+	//  3: dï¿½collage
 	//  4: vol normal
 	//  5: atterissage
 	//
@@ -64,15 +64,15 @@ int main(int argc, char **argv) {
 	printf("\n");
 
 	//
-	// Récupérons les numéros de devices séries (paramètre optionnel)
+	// Rï¿½cupï¿½rons les numï¿½ros de devices sï¿½ries (paramï¿½tre optionnel)
 	//
-	int premierDevice = 0; // La valeur par défaut, qu'on utilisera s'il n'y a pas d'arguments
+	int premierDevice = 0; // La valeur par dï¿½faut, qu'on utilisera s'il n'y a pas d'arguments
 	if (argc >= 2) {
 		int arg = atoi(argv[1]);
 		if (arg >= 0 && arg <= 2) {
 			premierDevice = arg;
 		} else {
-			printf("Argument devices hors de portée.\n");
+			printf("Argument devices hors de portï¿½e.\n");
 		}
 	}
 
@@ -91,31 +91,31 @@ int main(int argc, char **argv) {
 	flags |= O_NONBLOCK;
 	fcntl(0, F_SETFL, flags);
 
-	printf("Initialisation des différents modules...");
+	printf("Initialisation des diffï¿½rents modules...");
 	fflush(stdout);
 
-	Misc_Initialise(); // Ne dépend de rien d'autre // Pas de blabla
-	Maths_Initialise(); // Ne dépend de rien d'autre // Pas de blabla
-	Params_Initialise(); // Après Maths_Initialise(); (peut utiliser des maths) // Pas de blabla
-	Asservissement_Initialise(); // Après Params_Initialise();
-	Pilote_Initialise(); // Après Params, // Pas de blabla
+	Misc_Initialise(); // Ne dï¿½pend de rien d'autre // Pas de blabla
+	Maths_Initialise(); // Ne dï¿½pend de rien d'autre // Pas de blabla
+	Params_Initialise(); // Aprï¿½s Maths_Initialise(); (peut utiliser des maths) // Pas de blabla
+	Asservissement_Initialise(); // Aprï¿½s Params_Initialise();
+	Pilote_Initialise(); // Aprï¿½s Params, // Pas de blabla
 
 	printf(" OK\n");
 
-	printf("Fermeture des serveurs port séries...");
+	printf("Fermeture des serveurs port sï¿½ries...");
 	fflush(stdout);
 	system("pkill -9 xuartctl"); // kill tous les process utilisant xuartctl
 	usleep(100 * 1000);
 	printf(" OK\n");
 
-	// La fonction suivante émet son propre blabla
-	Controlleur_Initialise(0); // Après Params_Initialise(); // Argument: 1 pour allumer les moteurs successivement
+	// La fonction suivante ï¿½met son propre blabla
+	Controlleur_Initialise(0); // Aprï¿½s Params_Initialise(); // Argument: 1 pour allumer les moteurs successivement
 
 
 	int grnLedOn = 0;
 	int redLedOn = 0;
-	Misc_SetRedLed(0);
-	Misc_SetGrnLed(0);
+	//Misc_SetRedLed(0); //TS7500
+	//Misc_SetGrnLed(0);
 
 	if (0) {
 		CommWiFi_Initialise(); // Emet son propre blabla
@@ -131,31 +131,31 @@ int main(int argc, char **argv) {
 		printf(" OK\n");
 	}
 
-	// On se donne temporairement la priorité -15 pour que les xuart l'aient
+	// On se donne temporairement la prioritï¿½ -15 pour que les xuart l'aient
 	//
-	// -15 pour les xuartctl (Port séries) et ts7500ctl (I2C)
+	// -15 pour les xuartctl (Port sï¿½ries) et ts7500ctl (I2C)
 	// -10 pour nous et ts7500ctl
 	// -5 pour les trucs systemes importants
 	// 0 pour le reste
-	// Plage: -20 (haute priorité) à +20 (faible priorité)
+	// Plage: -20 (haute prioritï¿½) ï¿½ +20 (faible prioritï¿½)
 	int usePrio = 0;
 
 	if (usePrio && setpriority(PRIO_PROCESS, getpid(), -15)) {
 		printf("ERREUR: setpriority\n");
 	}
 
-	Centrale_Initialise(premierDevice); // Argument: le dev par défaut, -1 pour laisser l'utilisateur choisir
+	Centrale_Initialise(premierDevice); // Argument: le dev par dï¿½faut, -1 pour laisser l'utilisateur choisir
 
-	Sonar_Initialise(premierDevice + 1); // Argument: le dev par défaut, -1 pour laisser l'utilisateur choisir
+	Sonar_Initialise(premierDevice + 1); // Argument: le dev par dï¿½faut, -1 pour laisser l'utilisateur choisir
 
 	// On se replace a -10
 	if (usePrio && setpriority(PRIO_PROCESS, getpid(), -10)) {
 		printf("ERREUR: setpriority !\n");
 	}
 
-	printf("Merci de vérifier les numéros de devices ci-dessus\n");
+	printf("Merci de vï¿½rifier les numï¿½ros de devices ci-dessus\n");
 	if (usePrio) {
-		printf("ET de vous assurer que la priorité du process ts5700ctl est strictement négative !\n");
+		printf("ET de vous assurer que la prioritï¿½ du process ts5700ctl est strictement nï¿½gative !\n");
 	}
 
 	if (0) {
@@ -171,31 +171,31 @@ int main(int argc, char **argv) {
 	int dernierTestSonar = 0;
 	int dispUneFois = 0;
 
-	int toursAvantVerInputConsole = VERIFICATION_INPUT_CONSOLE_TOUT_LES - 1; // Initialisé ainsi pour vérifier une commande 
-	//   dès le 1er tour de boucle
+	int toursAvantVerInputConsole = VERIFICATION_INPUT_CONSOLE_TOUT_LES - 1; // Initialisï¿½ ainsi pour vï¿½rifier une commande 
+	//   dï¿½s le 1er tour de boucle
 
 	int dispFreqOnce = 0;
 
 	//
 	// Liste des commandes
 	//
-	int MAX_COMMAND_LENGTH = 7 + 2; // Prendre la longueur réelle + 2 pour le \n et un cran de sécurité !!!
+	int MAX_COMMAND_LENGTH = 7 + 2; // Prendre la longueur rï¿½elle + 2 pour le \n et un cran de sï¿½curitï¿½ !!!
 
 
 	char chSETPR[] = "set ep"; // Pas d'estimation
-	//---Réglages des gains
-	char chSETLP[] = "set lp"; // Régler le gain lacet proportionnel
-	char chSETLI[] = "set li"; // Régler le gain lacet intégral
-	char chSETLD[] = "set ld"; // Régler le gain lacet dérivé
-	char chSETRP[] = "set rp"; // Régler le gain roulis proportionnel
-	char chSETRI[] = "set ri"; // Régler le gain roulis intégral
-	char chSETRD[] = "set rd"; // Régler le gain roulis dérivé
-	char chSETTP[] = "set tp"; // Régler le gain tangage proportionnel
-	char chSETTI[] = "set ti"; // Régler le gain tangage intégral
-	char chSETTD[] = "set td"; // Régler le gain tangage dérivé
-	char chSETAP[] = "set ap"; // Régler le gain altitude proportionnel
-	char chSETAI[] = "set ai"; // Régler le gain altitude intégral
-	char chSETAD[] = "set ad"; // Régler le gain altitude dérivé
+	//---Rï¿½glages des gains
+	char chSETLP[] = "set lp"; // Rï¿½gler le gain lacet proportionnel
+	char chSETLI[] = "set li"; // Rï¿½gler le gain lacet intï¿½gral
+	char chSETLD[] = "set ld"; // Rï¿½gler le gain lacet dï¿½rivï¿½
+	char chSETRP[] = "set rp"; // Rï¿½gler le gain roulis proportionnel
+	char chSETRI[] = "set ri"; // Rï¿½gler le gain roulis intï¿½gral
+	char chSETRD[] = "set rd"; // Rï¿½gler le gain roulis dï¿½rivï¿½
+	char chSETTP[] = "set tp"; // Rï¿½gler le gain tangage proportionnel
+	char chSETTI[] = "set ti"; // Rï¿½gler le gain tangage intï¿½gral
+	char chSETTD[] = "set td"; // Rï¿½gler le gain tangage dï¿½rivï¿½
+	char chSETAP[] = "set ap"; // Rï¿½gler le gain altitude proportionnel
+	char chSETAI[] = "set ai"; // Rï¿½gler le gain altitude intï¿½gral
+	char chSETAD[] = "set ad"; // Rï¿½gler le gain altitude dï¿½rivï¿½
 
 
 	videBufferSonar();
@@ -208,21 +208,21 @@ int main(int argc, char **argv) {
 	//
 	//
 	//---------------------------------------------------------------------------
-	printf("Initialisation terminée !\n");
+	printf("Initialisation terminï¿½e !\n");
 	fflush(stdout);
 	Misc_ResetElapsedUs();
 
 	for (;;) { // La boucle infinie du programme
 
 		//
-		// Vérification de la liaison
+		// Vï¿½rification de la liaison
 		//
 		if (state > 1 && modeI2C > 0) {
 			attenteSignal++;
 			if (attenteSignal == 300) { // 5 sec avant warning
-				printf("\nATTENTION: communication inactive, merci d'appuyer sur entrée !\n");
+				printf("\nATTENTION: communication inactive, merci d'appuyer sur entrï¿½e !\n");
 				fflush(stdout);
-			} else if (attenteSignal == 500) { // 10 sec avant désactivation
+			} else if (attenteSignal == 500) { // 10 sec avant dï¿½sactivation
 
 				if (state == 3 || state == 4) {
 					state = 5; // Lance un atterissage si en vol
@@ -237,7 +237,7 @@ int main(int argc, char **argv) {
 
 		//////////////////////////////////////////////////////////////////
 		//
-		// Regardons si une commande a été tapé dans la console 
+		// Regardons si une commande a ï¿½tï¿½ tapï¿½ dans la console 
 		//
 		//////////////////////////////////////////////////////////////////
 		toursAvantVerInputConsole++;
@@ -265,14 +265,14 @@ int main(int argc, char **argv) {
 					}
 
 					//
-					// Comparons le a la liste des commandes implémentés
+					// Comparons le a la liste des commandes implï¿½mentï¿½s
 					//
 					//------------------------------------------------
 					//--------------- TOUCHE "ENTREE" ----------------
 					//------------------------------------------------
 					if ((int)dst[0] == 10) {
 						dispUneFois = 1;
-						// Nous poursuivons l'éxécution tranquillement
+						// Nous poursuivons l'ï¿½xï¿½cution tranquillement
 					}
 
 					//---------------- Traitons en premier les commandes longues -------------
@@ -285,30 +285,30 @@ int main(int argc, char **argv) {
 						GAINS_PRO[0]
 								= askFloatValue("Gain proportionnel lacet");
 					} else if (strncmp(chSETLI, dst, sizeof chSETLI - 1) == 0) {
-						GAINS_INT[0] = askFloatValue("Gain intégral lacet");
+						GAINS_INT[0] = askFloatValue("Gain intï¿½gral lacet");
 					} else if (strncmp(chSETLD, dst, sizeof chSETLD - 1) == 0) {
-						GAINS_DER[0] = askFloatValue("Gain dérivé lacet");
+						GAINS_DER[0] = askFloatValue("Gain dï¿½rivï¿½ lacet");
 					} else if (strncmp(chSETRP, dst, sizeof chSETRP - 1) == 0) {
 						GAINS_PRO[1]
 								= askFloatValue("Gain proportionnel roulis");
 					} else if (strncmp(chSETRI, dst, sizeof chSETRI - 1) == 0) {
-						GAINS_INT[1] = askFloatValue("Gain intégral roulis");
+						GAINS_INT[1] = askFloatValue("Gain intï¿½gral roulis");
 					} else if (strncmp(chSETRD, dst, sizeof chSETRD - 1) == 0) {
-						GAINS_DER[1] = askFloatValue("Gain dérivé roulis");
+						GAINS_DER[1] = askFloatValue("Gain dï¿½rivï¿½ roulis");
 					} else if (strncmp(chSETTP, dst, sizeof chSETTP - 1) == 0) {
 						GAINS_PRO[2]
 								= askFloatValue("Gain proportionnel tangage");
 					} else if (strncmp(chSETTI, dst, sizeof chSETTI - 1) == 0) {
-						GAINS_INT[2] = askFloatValue("Gain intégral tangage");
+						GAINS_INT[2] = askFloatValue("Gain intï¿½gral tangage");
 					} else if (strncmp(chSETTD, dst, sizeof chSETTD - 1) == 0) {
-						GAINS_DER[2] = askFloatValue("gain dérivé tangage");
+						GAINS_DER[2] = askFloatValue("gain dï¿½rivï¿½ tangage");
 					} else if (strncmp(chSETAP, dst, sizeof chSETAP - 1) == 0) {
 						GAINS_PRO[3]
 								= askFloatValue("GAIN proportionnel altitude");
 					} else if (strncmp(chSETAI, dst, sizeof chSETAI - 1) == 0) {
-						GAINS_INT[3] = askFloatValue("GAIN intégral altitude");
+						GAINS_INT[3] = askFloatValue("GAIN intï¿½gral altitude");
 					} else if (strncmp(chSETAD, dst, sizeof chSETAD - 1) == 0) {
-						GAINS_DER[3] = askFloatValue("GAIN dérivé altitude");
+						GAINS_DER[3] = askFloatValue("GAIN dï¿½rivï¿½ altitude");
 					}
 
 					//------------------------------------------------
@@ -321,15 +321,15 @@ int main(int argc, char **argv) {
 									ESTIMATEUR_TEMPS_DE_REACTION);
 							int value = askIntValue("TDR");
 							if (value >= 1 && value <= 5) {
-								printf("Nouvelle valeur acceptée !");
+								printf("Nouvelle valeur acceptï¿½e !");
 								ESTIMATEUR_TEMPS_DE_REACTION = value;
 								Asservissement_Initialise();
 							} else {
-								printf("ERREUR: Nouvelle valeure refusée !\n");
+								printf("ERREUR: Nouvelle valeure refusï¿½e !\n");
 								fflush(stdout);
 							}
 						} else {
-							printf("Commande inaccessible dans cet état !\n");
+							printf("Commande inaccessible dans cet ï¿½tat !\n");
 							fflush(stdout);
 						}
 					}
@@ -362,14 +362,14 @@ int main(int argc, char **argv) {
 					//------------------------------------------------
 					else if (dst[0] == 'p') {
 						VEqui += 50.0F;
-						printf("Nouvelle vitesse d'équilibre: %f\n", VEqui);
+						printf("Nouvelle vitesse d'ï¿½quilibre: %f\n", VEqui);
 						fflush(stdout);
 						if (state == 4) {
 							Vactu = VEqui;
 						}
 					} else if (dst[0] == 'm') {
 						VEqui -= 50.0F;
-						printf("Nouvelle vitesse d'équilibre: %f\n", VEqui);
+						printf("Nouvelle vitesse d'ï¿½quilibre: %f\n", VEqui);
 						fflush(stdout);
 						if (state == 4) {
 							Vactu = VEqui;
@@ -384,14 +384,14 @@ int main(int argc, char **argv) {
 						if(ALTITUDE_FIN_DECOLLAGE > 0.8F) {
 							ALTITUDE_FIN_DECOLLAGE = 0.8F;
 						}
-						printf("Nouvelle altitude cible au décollage: %icm\n", (int)(100.0F * ALTITUDE_FIN_DECOLLAGE));
+						printf("Nouvelle altitude cible au dï¿½collage: %icm\n", (int)(100.0F * ALTITUDE_FIN_DECOLLAGE));
 						fflush(stdout);
 					} else if (dst[0] == '*') {
 						ALTITUDE_FIN_DECOLLAGE -= 0.05F;
 						if(ALTITUDE_FIN_DECOLLAGE < 0.3F) {
 							ALTITUDE_FIN_DECOLLAGE = 0.3F;
 						}
-						printf("Nouvelle altitude cible au décollage: %icm\n", (int)(100.0F * ALTITUDE_FIN_DECOLLAGE));
+						printf("Nouvelle altitude cible au dï¿½collage: %icm\n", (int)(100.0F * ALTITUDE_FIN_DECOLLAGE));
 						fflush(stdout);
 					}
 
@@ -402,10 +402,10 @@ int main(int argc, char **argv) {
 					//------------------------------------------------
 					else if (dst[0] == 'w') {
 						if (state == -1) {
-							printf("Erreur ignoré !\n");
+							printf("Erreur ignorï¿½ !\n");
 							state = 0;
 						} else {
-							printf("ERREUR: La commande ne peut être appliqué dans ce contexte.\n");
+							printf("ERREUR: La commande ne peut ï¿½tre appliquï¿½ dans ce contexte.\n");
 						}
 						fflush(stdout);
 					}
@@ -426,7 +426,7 @@ int main(int argc, char **argv) {
 							ConsLRTA[0] = 0.0F; // 0 en lacet
 							ConsLRTA[3] = 0.0F; // 0 en altitude
 							if (ConsLRTA[1] != 0.0F || ConsLRTA[2] != 0) {
-								printf("\n\nWARNING: Initialisé avec consignes RT non nulles !!\n\n");
+								printf("\n\nWARNING: Initialisï¿½ avec consignes RT non nulles !!\n\n");
 							}
 
 							if (state == -1) {
@@ -437,7 +437,7 @@ int main(int argc, char **argv) {
 							}
 							fflush(stdout);
 						} else {
-							printf("ERREUR: La commande ne peut être appliqué dans ce contexte.\n");
+							printf("ERREUR: La commande ne peut ï¿½tre appliquï¿½ dans ce contexte.\n");
 						}
 						fflush(stdout);
 					}
@@ -449,7 +449,7 @@ int main(int argc, char **argv) {
 							printf("Mise en rotation...\n");
 							state = 2;
 						} else {
-							printf("ERREUR: La commande ne peut être appliqué dans ce contexte.\n");
+							printf("ERREUR: La commande ne peut ï¿½tre appliquï¿½ dans ce contexte.\n");
 						}
 						fflush(stdout);
 					}
@@ -458,11 +458,11 @@ int main(int argc, char **argv) {
 					//------------------------------------------------
 					else if (dst[0] == 'v') {
 						if (state == 2) {
-							printf("Décollage...\n");
+							printf("Dï¿½collage...\n");
 							Vactu = 0.0F;
 							state = 3;
 						} else {
-							printf("ERREUR: La commande ne peut être appliqué dans ce contexte.\n");
+							printf("ERREUR: La commande ne peut ï¿½tre appliquï¿½ dans ce contexte.\n");
 						}
 						fflush(stdout);
 					}
@@ -474,7 +474,7 @@ int main(int argc, char **argv) {
 							printf("Atterissage...\n");
 							state = 5;
 						} else {
-							printf("ERREUR: La commande ne peut être appliqué dans ce contexte.\n");
+							printf("ERREUR: La commande ne peut ï¿½tre appliquï¿½ dans ce contexte.\n");
 						}
 						fflush(stdout);
 					}
@@ -508,7 +508,7 @@ int main(int argc, char **argv) {
 						if (dispType == 3) {
 							dispType = 0;
 						}
-						printf("Mode d'affichage changé. (mode actuel: %i)\n",
+						printf("Mode d'affichage changï¿½. (mode actuel: %i)\n",
 								dispType);
 						fflush(stdout);
 					}
@@ -521,7 +521,7 @@ int main(int argc, char **argv) {
 							modeI2C = 0;
 						}
 						printf(
-								"Mode de controle I2C changé. (mode actuel: %i)\n",
+								"Mode de controle I2C changï¿½. (mode actuel: %i)\n",
 								modeI2C);
 						fflush(stdout);
 					}
@@ -534,7 +534,7 @@ int main(int argc, char **argv) {
 							BUF_CTR = 1;
 						}
 						printf(
-								"Buffer centrale changé. (facteur actuel: %i)\n",
+								"Buffer centrale changï¿½. (facteur actuel: %i)\n",
 								BUF_CTR);
 						fflush(stdout);
 					}
@@ -544,10 +544,10 @@ int main(int argc, char **argv) {
 					else if (dst[0] == 'y') {
 						if (readSonar == 1) {
 							readSonar = 0;
-							printf("Lecture sonar désactivée !\n");
+							printf("Lecture sonar dï¿½sactivï¿½e !\n");
 						} else {
 							readSonar = 1;
-							printf("Lecture sonar activée !\n");
+							printf("Lecture sonar activï¿½e !\n");
 						}
 						fflush(stdout);
 					}
@@ -563,8 +563,8 @@ int main(int argc, char **argv) {
 					//-------------- COMMANDE "l" ---------------
 					//------------------------------------------------
 					else if (dst[0] == 'l') {
-						// Listons les réglages PID actuels
-						printf("\n               Proportionnel      Intégral         Dérivé\n");
+						// Listons les rï¿½glages PID actuels
+						printf("\n               Proportionnel      Intï¿½gral         Dï¿½rivï¿½\n");
 						printf("Lacet    : %15f %15f %15f\n", GAINS_PRO[0],
 								GAINS_INT[0], GAINS_DER[0]);
 						printf("Roulis   : %15f %15f %15f\n", GAINS_PRO[1],
@@ -597,7 +597,7 @@ int main(int argc, char **argv) {
 
 		//////////////////////////////////////////////////////////////////
 		//
-		// Récupération de l'état du système 
+		// Rï¿½cupï¿½ration de l'ï¿½tat du systï¿½me 
 		//
 		//////////////////////////////////////////////////////////////////
 
@@ -616,13 +616,13 @@ int main(int argc, char **argv) {
 				if (NouvelleTrameCentrale) {
 					NouvelleTrameCentrale = 0;
 					break;
-					//--La trame a été récupéré et analysé, nous avons alors la nouvelle attitude du drone
-					// La variable trameRate a été mise a 1 si on a raté une trame entre temps !
+					//--La trame a ï¿½tï¿½ rï¿½cupï¿½rï¿½ et analysï¿½, nous avons alors la nouvelle attitude du drone
+					// La variable trameRate a ï¿½tï¿½ mise a 1 si on a ratï¿½ une trame entre temps !
 				} else {
 					attenteCentrale++;
 
 					if (attenteCentrale > 1000 * 100) { // La valeur de 100 convient parfaitement en lecture bloquante
-						printf("\nERREUR: Pas de données centrale !\n");
+						printf("\nERREUR: Pas de donnï¿½es centrale !\n");
 						fflush(stdout);
 						state = -1;
 						break;
@@ -646,7 +646,7 @@ int main(int argc, char **argv) {
 				NouvelleTrameSonar = 0;
 				attenteSonar = 0;
 
-				//--Tant mieux, l'altitude a été mis-à-jour
+				//--Tant mieux, l'altitude a ï¿½tï¿½ mis-ï¿½-jour
 				if (SonarTropBas) {
 					if (state == 4) {
 						printf("\nDANGER: Trop bas");
@@ -666,7 +666,7 @@ int main(int argc, char **argv) {
 				//--Tant pis, nous avons toujours l'ancienne valeur
 				attenteSonar++;
 				if (attenteSonar > ATTENTE_SONAR_MAXI) {
-					printf("\nERREUR: Pas de données sonar !\n");
+					printf("\nERREUR: Pas de donnï¿½es sonar !\n");
 					fflush(stdout);
 					state = -1;
 				}
@@ -682,9 +682,9 @@ int main(int argc, char **argv) {
 		//
 		// Important:
 		//
-		// A ce stade de la boucle, nous avons récupéré une trame centrale, et en avons extrait l'information
-		// temporelle qui nous a permis de calculer l'intervalle de temps réel entre les deux trames.
-		// Cette intervalle est stocké dans "IntervalleTemps" et est utilisé par Asservissement_Controle()
+		// A ce stade de la boucle, nous avons rï¿½cupï¿½rï¿½ une trame centrale, et en avons extrait l'information
+		// temporelle qui nous a permis de calculer l'intervalle de temps rï¿½el entre les deux trames.
+		// Cette intervalle est stockï¿½ dans "IntervalleTemps" et est utilisï¿½ par Asservissement_Controle()
 		// et puis par Pilote_CalculConsignes();
 		//
 
@@ -699,7 +699,7 @@ int main(int argc, char **argv) {
 			dispUneFois = 1;
 		}
 
-		if (1) { // Clignottement LED verte
+		if (0) { // Clignottement LED verte: TS7500
 			if (tempsSCum > 0.5F && !grnLedOn) {
 				grnLedOn = 1;
 				Misc_SetGrnLed(grnLedOn);
@@ -711,15 +711,15 @@ int main(int argc, char **argv) {
 
 		//////////////////////////////////////////////////////////////////
 		//
-		// Transitions d'état automatiques et sécurités
+		// Transitions d'ï¿½tat automatiques et sï¿½curitï¿½s
 		//
 		//////////////////////////////////////////////////////////////////
 
-		// 3 -> 4 (Fin du décollage)
+		// 3 -> 4 (Fin du dï¿½collage)
 		if (state == 3) {
 
 			if (Vactu < VEqui) {
-				// Premiere phase du décollage: amener Vactu a VEqui
+				// Premiere phase du dï¿½collage: amener Vactu a VEqui
 				Vactu += RAMPE_ROTATION * IntervalleTemps;
 				if (Vactu >= VEqui) {
 					Vactu = VEqui;
@@ -734,7 +734,7 @@ int main(int argc, char **argv) {
 				if (ConsLRTA[3] >= ALTITUDE_FIN_DECOLLAGE) {
 					ConsLRTA[3] = ALTITUDE_FIN_DECOLLAGE;
 					state = 4;
-					printf("\nDécollage terminé ! Vol de croisière.\n");
+					printf("\nDï¿½collage terminï¿½ ! Vol de croisiï¿½re.\n");
 					fflush(stdout);
 				}
 			}
@@ -747,30 +747,30 @@ int main(int argc, char **argv) {
 				ConsLRTA[3] -= RAMPE_DESCENTE * IntervalleTemps;
 				if (ConsLRTA[3] <= 0.0F) {
 					ConsLRTA[3] = 0.0F;
-					printf("\nDescente terminée !\n");
+					printf("\nDescente terminï¿½e !\n");
 					fflush(stdout);
 				}
 			} else {
 				// Seconde phase: extinction des moteurs
 				Vactu -= RAMPE_ROTATION * IntervalleTemps;
-				if (Vactu <= 0.0F) { // Sera limité par la valeur minimale de toute façon
+				if (Vactu <= 0.0F) { // Sera limitï¿½ par la valeur minimale de toute faï¿½on
 					Vactu = 0.0F;
 					state = 1;
-					printf("\nAtterissage terminé !\n");
+					printf("\nAtterissage terminï¿½ !\n");
 					fflush(stdout);
 				}
 			}
 		}
 
 		//
-		// Vérification des plages de fonctionnement
+		// Vï¿½rification des plages de fonctionnement
 		//
-		if (state >= 1) { // Initialisé ou en vol
+		if (state >= 1) { // Initialisï¿½ ou en vol
 
 			//--Angle de lacet
 			if (Misc_Abs(ConsLRTA[0] - PosLRTA[0]) > ECART_MAXI_L) {
 				printf(
-						"\nERREUR: Angle de lacet hors de porté (Cons=%5f°, Pos=%5f°)!\n",
+						"\nERREUR: Angle de lacet hors de portï¿½ (Cons=%5fï¿½, Pos=%5fï¿½)!\n",
 						57 * ConsLRTA[0], 57 * PosLRTA[0]);
 				fflush(stdout);
 				state = -1;
@@ -779,7 +779,7 @@ int main(int argc, char **argv) {
 			//--Angle de roulis
 			if (Misc_Abs(ConsLRTA[1] - PosLRTA[1]) > ECART_MAXI_RT) {
 				printf(
-						"\nERREUR: Angle de roulis hors de porté (Cons=%5f°, Pos=%5f°)!\n",
+						"\nERREUR: Angle de roulis hors de portï¿½ (Cons=%5fï¿½, Pos=%5fï¿½)!\n",
 						57 * ConsLRTA[1], 57 * PosLRTA[1]);
 				fflush(stdout);
 				state = -1;
@@ -788,7 +788,7 @@ int main(int argc, char **argv) {
 			//--Angle de tangage
 			if (Misc_Abs(ConsLRTA[2] - PosLRTA[2]) > ECART_MAXI_RT) {
 				printf(
-						"\nERREUR: Angle de tangage hors de porté (Cons=%5f°, Pos=%5f°)!\n",
+						"\nERREUR: Angle de tangage hors de portï¿½ (Cons=%5fï¿½, Pos=%5fï¿½)!\n",
 						57 * ConsLRTA[2], 57 * PosLRTA[2]);
 				fflush(stdout);
 				state = -1;
@@ -797,7 +797,7 @@ int main(int argc, char **argv) {
 			//--Altitude
 			if (Misc_Abs(ConsLRTA[3] - PosLRTA[3]) > ECART_MAXI_A) {
 				printf(
-						"\nERREUR: Altitude hors de porté (Cons=%5fcm, Pos=%5fcm)!\n",
+						"\nERREUR: Altitude hors de portï¿½ (Cons=%5fcm, Pos=%5fcm)!\n",
 						100 * ConsLRTA[3], 100 * PosLRTA[3]);
 				fflush(stdout);
 				state = -1;
@@ -840,21 +840,21 @@ int main(int argc, char **argv) {
 			dispUneFois = 0;
 
 			//
-			// Mise a jour LED rouge
+			// Mise a jour LED rouge TS7500
 			//
-			if (state == -1 && !redLedOn) {
+			/*if (state == -1 && !redLedOn) {
 				redLedOn = 1;
 				Misc_SetRedLed(redLedOn);
 			} else if (state >= 0 && redLedOn) {
 				redLedOn = 0;
 				Misc_SetRedLed(redLedOn);
 			}
-
+			*/
 			//
 			// dispType :
-			//   0 : aucun affichage régulier
-			//   1 : affichage ligne d'état
-			//   2 : affichage ligne d'état + freqs
+			//   0 : aucun affichage rï¿½gulier
+			//   1 : affichage ligne d'ï¿½tat
+			//   2 : affichage ligne d'ï¿½tat + freqs
 			if (dispType > 0) {
 
 				//
@@ -903,7 +903,7 @@ int main(int argc, char **argv) {
 				//
 				// Lacet, roulis, tangage
 				//
-				printf(" L: %3i/%3i°  R: %2i/%2i°  T: %2i/%2i°", (int)(57
+				printf(" L: %3i/%3iï¿½  R: %2i/%2iï¿½  T: %2i/%2iï¿½", (int)(57
 						* PosLRTA[0]), (int)(57 * ConsLRTA[0]), (int)(57
 						* PosLRTA[1]), (int)(57 * ConsLRTA[1]), (int)(57
 						* PosLRTA[2]), (int)(57 * ConsLRTA[2]));
@@ -947,7 +947,7 @@ int main(int argc, char **argv) {
 
 		//////////////////////////////////////////////////////////////////
 		//
-		// Fin de la boucle, temporisation si nécessaire 
+		// Fin de la boucle, temporisation si nï¿½cessaire 
 		//
 		//////////////////////////////////////////////////////////////////
 
@@ -979,10 +979,10 @@ int main(int argc, char **argv) {
 	Pilote_Termine();
 	CommWiFi_Termine();
 
-	Misc_SetGrnLed(0);
-	Misc_SetRedLed(0);
+	//Misc_SetGrnLed(0); TS7500
+	//Misc_SetRedLed(0);
 
-	printf("Programme terminé !\n");
+	printf("Programme terminï¿½ !\n");
 	fflush(stdout);
 	return 1;
 }
