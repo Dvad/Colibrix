@@ -12,6 +12,7 @@
 #include <linux/i2c-dev.h> /* for I2C_SLAVE */
 #include <stdio.h>
 #include <sys/ioctl.h> //pour x86
+#include "i2C.h"
 int fdc = -1;
 int estInitialiseI2C;
 int I2C_Initialise(){

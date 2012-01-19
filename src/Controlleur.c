@@ -9,7 +9,7 @@
 #include <unistd.h>  // New
 #include <stdint.h>  // New
 #include <termios.h>
-#include "i2C.c" //TODO faire un header, intêret?
+#include "i2C.h"
 
 //void usleep(int us); // New: commented out
 //void close(int id);  // New: commented out
