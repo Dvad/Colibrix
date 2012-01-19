@@ -33,7 +33,7 @@ float dernieresAltitudes[32]; // >= DUREE_MOYENNAGE_ALTITUDE
 
 
 //
-// Variables prÈdÈclarÈs pour Èviter les temps d'allocation, elles sont initialisÈ avant chaque utilisation
+// Variables pr√©d√©clar√©s pour √©viter les temps d'allocation, elles sont initialis√© avant chaque utilisation
 //
 float alti;
 char valChar[4]; // Stocke temporairement la valeur sous forme char
@@ -44,7 +44,7 @@ int altiPouces;
 
 void Sonar_Initialise(int dev) {
 
-	printf("CrÈation serveur sonar...\n");
+	printf("Cr√©ation serveur sonar...\n");
 	// /usr/local/sbin/
 	
 	
@@ -60,7 +60,7 @@ void Sonar_Initialise(int dev) {
 	usleep(100000);
 
 	if (dev == -1) { // Laisser l'utilisateur choisir
-		dev = askIntValue("NumÈro device ci dessus");
+		dev = askIntValue("Num√©ro device ci dessus");
 	}
 
 	char* adresse;
@@ -128,21 +128,21 @@ void Sonar_CheckData(int keepIt) {
 	}
 
 	if (ret<0 && ret !=EAGAIN) {
-		// errno==11 correspond a "ressource indisponible" = pas de donnÈes !
+		// errno==11 correspond a "ressource indisponible" = pas de donn√©es !
 		//
-		// ERREUR GRAVE - Gestion ‡ faire
+		// ERREUR GRAVE - Gestion √© faire
 		//
 		printf("\nERREUR LECTURE SONAR: %s (errno=%i)\n", strerror(errno),
 				errno);
 
 	} else if (ret==EAGAIN) {
 		//
-		// Pas de donnÈes, pas grave on retourne
+		// Pas de donn√©es, pas grave on retourne
 		//
 
 	} else {
 		//
-		// On a des donnÈes
+		// On a des donn√©es
 		//
 		//--Etape 1: Recopions les dans bufferCircuSonar
 		for (i = 0; i < ret; i++) {
@@ -153,7 +153,7 @@ void Sonar_CheckData(int keepIt) {
 				indexEcritureSonar = 0;
 			}
 		}
-		//--Etape 2: Calculons le nombre de donnÈes disponibles
+		//--Etape 2: Calculons le nombre de donn√©es disponibles
 		donneesDisponibles = indexEcritureSonar - indexLectureSonar;
 		if (donneesDisponibles < 0)
 			donneesDisponibles += SONAR_TAILLE_BUFFER;
@@ -162,17 +162,17 @@ void Sonar_CheckData(int keepIt) {
 		while (donneesDisponibles >= SONAR_TAILLE_TRAME) {
 
 			// La trame est de type 82, A, B, C, 13 
-			// avec A,B,C l'Ècriture de la dist en ASCII(13 = "\n")
+			// avec A,B,C l'√©criture de la dist en ASCII(13 = "\n")
 			if (bufferCircuSonar[indexLectureSonar] == 82) {
 				// 82 ASCII == 'R'
-				//--DÈbut d'une trame
+				//--D√©but d'une trame
 				lireTrameSonar();
 				indexLectureSonar += SONAR_TAILLE_TRAME;
 				freqSonar++;
 			} else {
-				//--Pas le dÈbut d'une trame
-				indexLectureSonar++; // AvanÁons l'index d'un cran 
-				recherchesSonar++; // pour trouver le dÈbut
+				//--Pas le d√©but d'une trame
+				indexLectureSonar++; // Avan√©ons l'index d'un cran 
+				recherchesSonar++; // pour trouver le d√©but
 			}
 
 			//--Maj des index
@@ -184,7 +184,7 @@ void Sonar_CheckData(int keepIt) {
 				// Arretons ici la boucle
 				donneesDisponibles = - 1;
 			} else {
-				// Recalculs le nombre de donnÈes disponibles
+				// Recalculs le nombre de donn√©es disponibles
 				donneesDisponibles = indexEcritureSonar - indexLectureSonar;
 				if (donneesDisponibles < 0) {
 					donneesDisponibles += SONAR_TAILLE_BUFFER;
@@ -229,7 +229,7 @@ void lireTrameSonar() {
 		PosLRTA[3] = 0.0;
 		derniereAltitudeMoyenneEstValable = 0;
 		
-	} else if (altiPouces >= 250) { // En rÈalitÈ c'est 254, 
+	} else if (altiPouces >= 250) { // En r√©alit√© c'est 254, 
 		// mais on prend 250 pour etre tranquille
 		// Le sonar est trop loin du sol
 		SonarTropHaut = 1;
@@ -243,9 +243,9 @@ void lireTrameSonar() {
 			
 		//
 		//
-		//--SytËme de moyenne sur l'altitude
+		//--Syt√©me de moyenne sur l'altitude
 		//
-		alti = 0.01F * 2.54F * (float)altiPouces; // Conversion de pouces en mËtres
+		alti = 0.01F * 2.54F * (float)altiPouces; // Conversion de pouces en m√©tres
 		nbValeursValables++;
 		dernieresAltitudes[indexDerniereAltitude] = alti;
 		indexDerniereAltitude++;
@@ -263,7 +263,7 @@ void lireTrameSonar() {
 			PosLRTA[3] -= SONAR_ALTI_MINI;
 
 			if (derniereAltitudeMoyenneEstValable) {
-				// Obtention de la vitesse par dÈrivation sur les 2 dernieres moyennes
+				// Obtention de la vitesse par d√©rivation sur les 2 dernieres moyennes
 				VitLRTA[3] = INVERSE_INTERVALLE_TEMPS_DERIVATION_SONAR
 						* (PosLRTA[3] - derniereAltitudeMoyenne);
 			} else {
@@ -277,7 +277,7 @@ void lireTrameSonar() {
 			
 			// On a pas encore assez de valeurs valables, attendons...
 			// On garde l'ancienne valeur de la position !! 
-			//  (Sinon on remettrai a zÈro en cas de trop haut !!)
+			//  (Sinon on remettrai a z√©ro en cas de trop haut !!)
 			VitLRTA[3] = 0.0;
 		}
 	}

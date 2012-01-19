@@ -7,12 +7,12 @@
 float predPosLRTA[4];
 float predVitLRTA[4];
 
-float ancLRTA[4]; // Pour l'int�gration
-float intLRTA[4]; // Valeur des int�grales
+float ancLRTA[4]; // Pour l'intégration
+float intLRTA[4]; // Valeur des intégrales
 float histURT[5 + 1][2]; // TODO: Taille de tableau non dynamique. TEMPS_DE_REACTION + 1, 2
-int indexHistorique; // Pour se rep�rer dans le tableau historique
+int indexHistorique; // Pour se repérer dans le tableau historique
 
-float CPL; // Termes de conversions de la commande unit� SI en commande moteur
+float CPL; // Termes de conversions de la commande unité SI en commande moteur
 float CPR;
 float CPT;
 float CPA;
@@ -29,7 +29,7 @@ void Asservissement_Initialise() {
 	CPA = MASSE_TOTALE / (4.0F * POUSEE_MOTEUR);
 
 	for (i = 0; i < 4; i++) {
-		ancLRTA[i]= 0.0F; // RAZ int�grales
+		ancLRTA[i]= 0.0F; // RAZ intégrales
 		intLRTA[i]= 0.0F;
 		
 		predPosLRTA[i] = 0.0F;
@@ -44,30 +44,30 @@ void Asservissement_Initialise() {
 }
 
 //
-// Les entr�es de la fonction d'asservissement
+// Les entrées de la fonction d'asservissement
 //
 // Utilise les tableaux PosLRTA et VitLRTA, et pire encore, les modifie !!!
 // Ils doivent donc etre mis a jour avant chaque appel !!!!!!!!!!!!!!!!!!!!
-// Utilise �galement IntervalleTemps et VEqui
+// Utilise également IntervalleTemps et VEqui
 //
 // Les sorties de la fonction d'asservissement
 //
 //--Modifie les valeurs du tableau Commande[]
 void Asservissement_Controle() {
 
-	// Calculer la commande en fonction de la position, de la vitesse, de la commande et des diff�rents r�glages
-	//  (gains et systeme de pr�diction) d�finis dans Params.c
+	// Calculer la commande en fonction de la position, de la vitesse, de la commande et des différents réglages
+	//  (gains et systeme de prédiction) définis dans Params.c
 	
 	for (i = 0; i < 4; i++) {
 		
 		//
-		// R�cup�ration des donn�es r�elles
+		// Récupération des données réelles
 		//
 		predPosLRTA[i] = PosLRTA[i];
 		predVitLRTA[i] = VitLRTA[i];
 		
 		//
-		// Mise � jour des int�grales
+		// Mise é jour des intégrales
 		//
 		intLRTA[i] += IntervalleTemps * (ancLRTA[i] + PosLRTA[i] - 2.0F * ConsLRTA[i]) * 0.5F;
 		ancLRTA[i] = PosLRTA[i];
@@ -76,7 +76,7 @@ void Asservissement_Controle() {
 	
 
 	//
-	// Mise en m�moire de la commande actuelle pour s'en servir plus tard
+	// Mise en mémoire de la commande actuelle pour s'en servir plus tard
 	//
 	histURT[indexHistorique][0] = ULRTA[1];
 	histURT[indexHistorique][1] = ULRTA[2];
@@ -91,7 +91,7 @@ void Asservissement_Controle() {
 	for (i = 0; i < ESTIMATEUR_TEMPS_DE_REACTION; i++) {
 
 		//
-		// Int�gration des acc�l�rations et vitesses suivant les lois de la dynamique
+		// Intégration des accélérations et vitesses suivant les lois de la dynamique
 		//
 		predVitLRTA[1] += ESTIMATEUR_GAIN_POUSEE * ESTIMATEUR_PAS_DE_TEMPS_MOYEN 
 			* histURT[(indexHistorique + i) % (ESTIMATEUR_TEMPS_DE_REACTION + 1)][0];
@@ -147,10 +147,10 @@ void Asservissement_Controle() {
 	
 
 	//
-	// Assignation des commandes sur les diff�rents moteurs
+	// Assignation des commandes sur les différents moteurs
 	//
 	CPAA = Cos(PosLRTA[1]) * Cos(PosLRTA[2]); // Prise en compte des angles RT pour
-	CPAA = 1.0F / CPAA;                       // calculer la pouss�e utile (projet� sur Z)
+	CPAA = 1.0F / CPAA;                       // calculer la poussée utile (projeté sur Z)
 
 	Commande[0] = Vactu + CPA * CPAA * ULRTA[3] + CPL * ULRTA[0] + CPT * ULRTA[2];
 	Commande[1] = Vactu + CPA * CPAA * ULRTA[3] + CPL * ULRTA[0] - CPT * ULRTA[2];

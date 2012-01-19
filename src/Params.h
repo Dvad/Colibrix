@@ -2,13 +2,13 @@
 #define PARAMS_H_
 
 
-#define DEG_EN_RAD 0.01745F   // Le facteur de conversion pour convertir des degrées en radians
-#define CM_EN_M 0.01F         // Idem de centimetres en mètres
+#define DEG_EN_RAD 0.01745F   // Le facteur de conversion pour convertir des degrÃ©es en radians
+#define CM_EN_M 0.01F         // Idem de centimetres en mÃ©tres
  
 int i;
 
 //
-// Constantes mécaniques
+// Constantes mÃ©caniques
 //
 float I_ROUL;
 float I_TANG;
@@ -89,7 +89,7 @@ int tramesEffacees;
 		
 		
 //
-// Variables d'état
+// Variables d'Ã©tat
 //
 int attenteSignal;
 float OrdreLRTA[4];
@@ -102,8 +102,8 @@ float ConsLRTA[4]; // Consignes LRTA
 float ULRTA[4];    // Commandes axes
 float Commande[4]; // Commandes moteur
 int CONTROLE_LRTA[4];   // Si oui ou non le controle de cet axe est actif
-float IntervalleTemps; // L'intervalle de temps entre la trame actuelle et la précédente
-float VEqui;           // La commande moteur d'équilibre
+float IntervalleTemps; // L'intervalle de temps entre la trame actuelle et la prÃ©cÃ©dente
+float VEqui;           // La commande moteur d'Ã©quilibre
 float Vactu;
 int state;
 float AltitudeBaro;
@@ -120,11 +120,11 @@ int DUREE_MOYENNAGE_ALTITUDE;
 int DUREE_MOYENNAGE_BARO;
 
 //
-// Paramètres
+// ParamÃ©tres
 //
 float GAINS_PRO[4]; // Les gains proportionnels pour la commande en LRTA
-float GAINS_INT[4]; // intégraux
-float GAINS_DER[4]; // dérivées
+float GAINS_INT[4]; // intÃ©graux
+float GAINS_DER[4]; // dÃ©rivÃ©es
 
 //
 // Liste des fonctions

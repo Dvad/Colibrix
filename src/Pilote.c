@@ -45,9 +45,9 @@ void Pilote_CalculConsignes() {
 	//return;
 	
 	// L'intervalle de temps depuis le dernier appel (apart si c'est le premier)
-	// est dans la variable "IntervalleTemps", exprim� en secondes flottantes.
+	// est dans la variable "IntervalleTemps", exprimé en secondes flottantes.
 	
-	// Pour l'instant, le pilote automatique garde en m�moire une assiette
+	// Pour l'instant, le pilote automatique garde en mémoire une assiette
 	// Et y ajoute des modifications temporaires
 	
 	
@@ -55,13 +55,13 @@ void Pilote_CalculConsignes() {
 	//6------------------------------ ATTENTION, CE CODE EST INCOMPATIBLE AVEC LA FONCTION ACTUELLE ----------
 	if(state == 3 || state == 5) {
 		// DECOLLAGE
-		ConsLRTA[0] = 0.0F; // Cap fixe lors du d�collage
-		ConsLRTA[1] = 0.0F; // Roulis z�ro
-		ConsLRTA[2] = 0.0F; // Tangage z�ro
-		// ConsLRTA[3] <- g�r� par le noyau
+		ConsLRTA[0] = 0.0F; // Cap fixe lors du décollage
+		ConsLRTA[1] = 0.0F; // Roulis zéro
+		ConsLRTA[2] = 0.0F; // Tangage zéro
+		// ConsLRTA[3] <- géré par le noyau
 	} else {
 		// VOL DE CROISIERE
-		//ConsLRTA[3] = ALTITUDE_DE_VOL; // Valeur a laquelle le d�collage am�ne le drone
+		//ConsLRTA[3] = ALTITUDE_DE_VOL; // Valeur a laquelle le décollage améne le drone
 		
 		ConsLRTA[1] = assietteZeroRT[0];
 		ConsLRTA[2] = assietteZeroRT[1];

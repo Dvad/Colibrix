@@ -17,7 +17,7 @@
 //////////////////////////// INTERDICTION D'UTILISER DSE VARIABLES TYPES "i" DANS CE THREAD //////////////
 
 
-#define PORT "1234" //Port D'�coute
+#define PORT "1234" //Port D'écoute
 // number of incoming cnxs to buffer
 #define BACKLOG 1 
 
@@ -35,7 +35,7 @@ int termine;
 int CommWiFi_Initialise() {
 	
 	
-	printf("D�marrage de la communication WiFi...");
+	printf("Démarrage de la communication WiFi...");
 	termine = 0;
 	pthread_create(&thread, NULL, CommWiFi, NULL);
 	usleep(100*1000); // 100ms
@@ -62,8 +62,8 @@ void* CommWiFi(void* data) {
 	int MAX_LENGTH_S = 256; //longueur du message ENVOYE
 	int MAX_LENGTH = 31; //longueur du message RECU
 	char msgwifienv[MAX_LENGTH_S+1];
-	char msg[MAX_LENGTH + 1]; //buffer contenant les donn�es recus.
-	int CHARS_PAR_INT = 6; //nb de carac�re repr�sentant les ordres d'assiette.
+	char msg[MAX_LENGTH + 1]; //buffer contenant les données recus.
+	int CHARS_PAR_INT = 6; //nb de caracére représentant les ordres d'assiette.
 	//
 	// Initialize the socket
 	//
@@ -139,9 +139,9 @@ void* CommWiFi(void* data) {
 			// do something with it : get 3 chars, and give them back 
 
 			read(new_fd, msg,MAX_LENGTH); //lit ce qui arrive sur le socket
-			msg[MAX_LENGTH]= '\0';// important : caract�re de fin de message
+			msg[MAX_LENGTH]= '\0';// important : caractére de fin de message
 
-			attenteSignal = 0; // La liaison est active ! (Bah oui! on a recu des donn�es non?)
+			attenteSignal = 0; // La liaison est active ! (Bah oui! on a recu des données non?)
 
 			//
 			// Detectons s'il s'agit d'un ordre d'assiette
@@ -173,7 +173,7 @@ void* CommWiFi(void* data) {
 			} else if (msg[0] == 'D' && msg[1] == 'E' && msg[2] == 'C') {
 				printf("\nRECEPTION ORDRE DECOLLAGE\n");
 				if (state == 2) {
-					printf("D�collage...\n");
+					printf("Décollage...\n");
 					Vactu = 0.0F;
 					state = 3;
 				}
@@ -185,13 +185,13 @@ void* CommWiFi(void* data) {
 			}
 
 			else {
-				printf("\nERREUR WIFI: R�ception d'un ordre inconnu: %s\n", msg);
+				printf("\nERREUR WIFI: Réception d'un ordre inconnu: %s\n", msg);
 				fflush(stdout);
 
 			}
-			//printf("\nWIFI: R�ception de l'ordre : %s\n", msg);
+			//printf("\nWIFI: Réception de l'ordre : %s\n", msg);
 
-			//Ces quelques lignes permettent d'envoyer des donn�es � la base.
+			//Ces quelques lignes permettent d'envoyer des données é la base.
 			snprintf(msgwifienv,MAX_LENGTH_S+1,"D"
 					"CL%fR%fT%fA%f"
 					"PL%fR%fT%fA%f"
@@ -208,7 +208,7 @@ void* CommWiFi(void* data) {
 	
 		close(new_fd); 	// terminate the cnx
 		printf("\nWIFI: Cnx terminated !");
-		state = -1; //Arret d'urgence! car plus de cnx, d�licat si l'ordre �tait important
+		state = -1; //Arret d'urgence! car plus de cnx, délicat si l'ordre était important
 		printf("\nWIFI: waiting for connections on port %s...\n", PORT); //on attend une nouvelle connection
 
 		if (termine) {

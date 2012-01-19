@@ -6,6 +6,8 @@
 #include <fcntl.h> // Pour le flag NON_BLOCK
 #include <stdio.h>
 #include <math.h>
+#include <stdint.h> //pour size_t
+
 
 typedef unsigned int size_t;
 
@@ -30,7 +32,7 @@ int indexEcritureCentrale;
 int estInitialiseCentrale;
 
 //
-// Variables pr�d�clar�s pour �viter les temps d'allocation, elles sont initialis� avant chaque utilisation
+// Variables prédéclarés pour éviter les temps d'allocation, elles sont initialisé avant chaque utilisation
 //
 int j;
 double tempDouble;
@@ -41,7 +43,7 @@ int donneesDisponibles;
 
 float tempsPic;
 float ancTempsPic;
-float ancLRT[3]; // Anciens angles pour obtention de la vitesse par d�rivation
+float ancLRT[3]; // Anciens angles pour obtention de la vitesse par dérivation
 float ancVitLRT[3];
 float insVitLRT[3];
 float zeroPosLRT[3];
@@ -68,7 +70,7 @@ float zeroPosLRT[3];
 
 void Centrale_Initialise(int dev) {
 
-	printf("Cr�ation serveur centrale...\n");
+	printf("Création serveur centrale...\n");
 
 	// IRQ: 29: XUART
 	// IRQ: 30: CAN
@@ -92,7 +94,7 @@ void Centrale_Initialise(int dev) {
 	usleep(100 * 1000);
 
 	if (dev == -1) { // Laisser l'utilisateur choisir
-		dev = askIntValue("Num�ro device ci dessus");
+		dev = askIntValue("Numéro device ci dessus");
 	}
 	
 	char* adresse;
@@ -160,7 +162,7 @@ void RAZBaro() {
 }
 
 //
-// Lit les donn�es, et si une trame est disponible l'utilise et met "NouvelleTrameCentrale" � 1.
+// Lit les données, et si une trame est disponible l'utilise et met "NouvelleTrameCentrale" é 1.
 //
 void Centrale_CheckData(int useData) {
 	
@@ -180,9 +182,9 @@ void Centrale_CheckData(int useData) {
 		return;
 	}
 		
-	if (ret<0 && ret != EAGAIN && errno != 11) { // errno==11 correspond a "ressource indisponible" = pas de donn�es !
+	if (ret<0 && ret != EAGAIN && errno != 11) { // errno==11 correspond a "ressource indisponible" = pas de données !
 		//
-		// ERREUR GRAVE - Gestion � faire
+		// ERREUR GRAVE - Gestion é faire
 		//
 		printf("\nERREUR LECTURE CENTRALE: %s (errno=%i)\n", strerror(errno),
 				errno);
@@ -191,7 +193,7 @@ void Centrale_CheckData(int useData) {
 		//abort();
 	} else if (ret==EAGAIN) {
 		//
-		// Pas de donn�es, pas grave on retourne
+		// Pas de données, pas grave on retourne
 		//
 		if(debug)printf("_NODATA_");
 
@@ -201,7 +203,7 @@ void Centrale_CheckData(int useData) {
 				printf("_OVERFLOW_");
 			} else if (ret > CENTRALE_TAILLE_TRAME) {
 				printf("+%i ", ret - CENTRALE_TAILLE_TRAME);
-				//	printf("\nCENTRALE: Il reste des donn�es !\n");
+				//	printf("\nCENTRALE: Il reste des données !\n");
 				//	Misc_SetRedLed(1);
 			} else if (ret == CENTRALE_TAILLE_TRAME) {
 				
@@ -223,7 +225,7 @@ void Centrale_CheckData(int useData) {
 		
 		
 		//
-		// On a des donn�es
+		// On a des données
 		//
 		//--Etape 1: Recopions les dans bufferCircuCentrale
 		if(ret > 0) {
@@ -234,7 +236,7 @@ void Centrale_CheckData(int useData) {
 					indexEcritureCentrale = 0;
 				}
 		}
-		//--Etape 2: Calculons le nombre de donn�es disponibles
+		//--Etape 2: Calculons le nombre de données disponibles
 		donneesDisponibles = indexEcritureCentrale - indexLectureCentrale;
 		if (donneesDisponibles < 0)
 			donneesDisponibles += CENTRALE_TAILLE_BUFFER;
@@ -250,15 +252,15 @@ void Centrale_CheckData(int useData) {
 							== 1 // Next frame type
 			) {
 				
-				//--D�but d'une trame
+				//--Début d'une trame
 				readFrame();
 				freqCentrale++;
-				indexLectureCentrale += CENTRALE_TAILLE_TRAME; // Avan�ons l'index d'une trame	
+				indexLectureCentrale += CENTRALE_TAILLE_TRAME; // Avanéons l'index d'une trame	
 				
 				if(debug)printf("T");
 			} else {
-				//--Pas le d�but d'une trame
-				indexLectureCentrale++; // Avan�ons l'index d'un cran pour trouver le d�but
+				//--Pas le début d'une trame
+				indexLectureCentrale++; // Avanéons l'index d'un cran pour trouver le début
 				recherchesCentrale++;
 				
 			}
@@ -270,14 +272,14 @@ void Centrale_CheckData(int useData) {
 				indexLectureCentrale -= CENTRALE_TAILLE_BUFFER;
 			}
 
-			if (0 && NouvelleTrameCentrale) { // La pr�sence du z�ro force a aller jusqu'au bout
-											  // Et donc de prendre la derniere trame si on r�cup�re 2 d'un coup
+			if (0 && NouvelleTrameCentrale) { // La présence du zéro force a aller jusqu'au bout
+											  // Et donc de prendre la derniere trame si on récupére 2 d'un coup
 
 				// Arretons ici la boucle
 				donneesDisponibles = - 1;
 
 			} else {
-				// Recalculons le nombre de donn�es disponibles
+				// Recalculons le nombre de données disponibles
 				donneesDisponibles = indexEcritureCentrale
 						- indexLectureCentrale;
 				if (donneesDisponibles < 0) {
@@ -286,7 +288,7 @@ void Centrale_CheckData(int useData) {
 			}
 
 		} // WHILE il y a de quoi faire une trame
-	} // If il y avait des donn�es
+	} // If il y avait des données
 } // Fin de la fonction
 
 
@@ -321,7 +323,7 @@ void readFrame() {
 	}
 
 	if (!passesCheckSum) {
-		printf("\nWARNING: CENTRALE: check sum rat� !");
+		printf("\nWARNING: CENTRALE: check sum raté !");
 		erreursCentrale++;
 		return;
 	}
@@ -337,11 +339,11 @@ void readFrame() {
 	
 
 	//
-	// V�rifions si des trames ont �t� rat�es
+	// Vérifions si des trames ont été ratées
 	//
-	if (0 && IntervalleTemps > 1.5F / 102.0F) { // Intervalle th�orique: 1/102
+	if (0 && IntervalleTemps > 1.5F / 102.0F) { // Intervalle théorique: 1/102
 		
-		//--Oui, d�terminons le nombre de trames rat�es
+		//--Oui, déterminons le nombre de trames ratées
 		int COMPTAGE_MAXI = 50;
 		int nbTramesRatees;
 		for(nbTramesRatees = 1; nbTramesRatees < COMPTAGE_MAXI; nbTramesRatees++) {
@@ -352,26 +354,26 @@ void readFrame() {
 		
 		if (1) { // Affiche les warnings pour manque de trames ?
 			if (nbTramesRatees >= 2 && nbTramesRatees != COMPTAGE_MAXI - 1) {
-				printf("\nWARNING: CENTRALE: Rat� %i trames d'un coup !",
+				printf("\nWARNING: CENTRALE: Raté %i trames d'un coup !",
 						nbTramesRatees);
 			} else if (nbTramesRatees == COMPTAGE_MAXI) {
-				printf("\nWARNING: CENTRALE: Rat� plus de %i trames !",
+				printf("\nWARNING: CENTRALE: Raté plus de %i trames !",
 						COMPTAGE_MAXI - 1);
 			}
 		}
 		
 		//printf("\nWARNING: CENTRALE: Intervalle entre trames trop long  : dt=%fms\n", 1000 * IntervalleTemps);
 		erreursCentrale += nbTramesRatees;
-		trameRate = 1; // Si oui ou non il y a eu des trames rat�s ce tour ci
+		trameRate = 1; // Si oui ou non il y a eu des trames ratés ce tour ci
 	} else {
 		trameRate = 0;
 	}
 	
 	if (0) {
-		if (IntervalleTemps > 1.5F / 102.0F) { // Rat� plus de deux trames
+		if (IntervalleTemps > 1.5F / 102.0F) { // Raté plus de deux trames
 			IntervalleTemps = 2.0F / 102.0F;
 		} else {
-			IntervalleTemps = 1.0F / 102.0F; //-----------------------Assez d�bile comme m�thode !
+			IntervalleTemps = 1.0F / 102.0F; //-----------------------Assez débile comme méthode !
 		}
 	}
 
@@ -386,10 +388,10 @@ void readFrame() {
 		//--Recentrage
 		PosLRTA[i] -= zeroPosLRT[i];
 		
-		//--V�rfication ordre de grandeur
+		//--Vérfication ordre de grandeur
 		if (PosLRTA[i] > 3.0F * PI || PosLRTA[i] < -3.0F * PI) {
 			erreursCentrale += 1;
-			printf("\nERREUR: CENTRALE: Angles hors de port�!\n");
+			printf("\nERREUR: CENTRALE: Angles hors de porté!\n");
 			return;
 		}
 		
@@ -399,10 +401,10 @@ void readFrame() {
 		if (PosLRTA[i] <= -PI)
 			PosLRTA[i] += DEUX_PI;
 
-		//--Obtention de la vitesse par d�rivation
+		//--Obtention de la vitesse par dérivation
 		
 		//---Vitesse actuelle
-		if(0) { // Utiliser vitese instantan�e
+		if(0) { // Utiliser vitese instantanée
 			VitLRTA[i] = 0.5F * (PosLRTA[i] - ancLRT[i]) / IntervalleTemps;
 		} else {
 			ancVitLRT[i] = insVitLRT[i];
@@ -413,7 +415,7 @@ void readFrame() {
 	}
 
 	//
-	// Acc�l�ros
+	// Accéléros
 	//
 	/*
 	 for (i = 0; i < 3; i++) {
@@ -483,9 +485,9 @@ void readFrame() {
 
 float getFloatAtOffset(int offset) {
 	//
-	// Optimisation: rajouter au pointeur dans le memcpy plutot que de copier des donn�es !!!!
+	// Optimisation: rajouter au pointeur dans le memcpy plutot que de copier des données !!!!
 
-	// 2 difficult�s a traiter ici:
+	// 2 difficultés a traiter ici:
 	// -> Il faut placer les 4 derniers octets en premiers en gardant leur ordre et sans inverser les bits !
 	// -> On est dans un buffer circulaire, attention aux indices trop grand..
 
@@ -499,12 +501,12 @@ float getFloatAtOffset(int offset) {
 
 	/*
 	 if (indexLectureCentrale + offset + 3 < CENTRALE_TAILLE_BUFFER) {
-	 //--Les 4 premiers octets sont align�s
+	 //--Les 4 premiers octets sont alignés
 	 memcpy((void*)(&result + 4), (void*)(&bufferCircuCentrale + indexLectureCentrale
 	 + offset), 4);
 
 	 } else {
-	 // Si on n'est pas dans un bloc adjacent du buffer, on applique un modulo pour cr�er un tableau
+	 // Si on n'est pas dans un bloc adjacent du buffer, on applique un modulo pour créer un tableau
 	 char tempFourBytes[4];
 	 for (; i < 4; i++) {
 	 tempFourBytes[i] = bufferCircuCentrale[(indexLectureCentrale + offset + i) % CENTRALE_TAILLE_BUFFER];
@@ -513,10 +515,10 @@ float getFloatAtOffset(int offset) {
 	 }
 	 
 	 if (indexLectureCentrale + offset + 7 < CENTRALE_TAILLE_BUFFER) {
-	 // Les 4 derniers octets sont align�s
+	 // Les 4 derniers octets sont alignés
 	 memcpy((void*)(&result), (void*)(&bufferCircuCentrale + indexLectureCentrale + offset
 	 + 4), 4);
-	 } else {// Si on n'est pas dans un bloc adjacent du buffer, on applique un modulo pour cr�er un tableau
+	 } else {// Si on n'est pas dans un bloc adjacent du buffer, on applique un modulo pour créer un tableau
 	 char tempFourBytes[4];
 	 for (i = 0; i < 4; i++) {
 	 tempFourBytes[i] = bufferCircuCentrale[(indexLectureCentrale + offset + i + 4) % CENTRALE_TAILLE_BUFFER];

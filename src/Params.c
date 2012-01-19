@@ -10,11 +10,11 @@ void Params_Initialise()
 	
 	
 	//
-	// Constantes m�caniques
+	// Constantes mécaniques
 	//
-	I_ROUL = 0.038F; // Moment d'inertie en roulis   // Valeur � recalculer
-	I_TANG = 0.038F; // Moment d'inertie en tangage  // Valeur � recalculer
-	I_LACT = 0.068F; // Moment d'inertie en lacet    // Valeur � recalculer
+	I_ROUL = 0.038F; // Moment d'inertie en roulis   // Valeur é recalculer
+	I_TANG = 0.038F; // Moment d'inertie en tangage  // Valeur é recalculer
+	I_LACT = 0.068F; // Moment d'inertie en lacet    // Valeur é recalculer
 	MASSE_TOTALE = 1.000F;
 	BRAS_DE_LEVIER = 0.20F;
 	TRAINEE_MOTEUR = 0.0005F;
@@ -32,10 +32,10 @@ void Params_Initialise()
 	// Constantes d'optimisation logicielle
 	SONAR_SAUT_MAXI = 1; // (JUMP = 1 <-> 0.6 m/s)
 	TEST_SONAR_TOUT_LES = 4; // En nombre de trame. freq centrale = 100, freq sonar = 20 => tout les 5
-	DUREE_MOYENNAGE_ALTITUDE = 4; // En unit� de pas sonar (50ms) | 10==0.5s
+	DUREE_MOYENNAGE_ALTITUDE = 4; // En unité de pas sonar (50ms) | 10==0.5s
 	VERIFICATION_INPUT_CONSOLE_TOUT_LES = 20; // 20 <=> 100/20 = 5 Hz
 	SONAR_ALTI_MINI = 0.15F;
-	INVERSE_INTERVALLE_TEMPS_DERIVATION_SONAR = 20.0F; // La fr�quence du sonar
+	INVERSE_INTERVALLE_TEMPS_DERIVATION_SONAR = 20.0F; // La fréquence du sonar
 	
 	SONAR_IRQ = 300; // 0 (hardware), 200, 300, 400
 	CENTRALE_IRQ = 300; // 0 (hardware), 200, 300, 400
@@ -48,22 +48,22 @@ void Params_Initialise()
 	// Estimateur
 	//
 	// Le produit ESTIMATEUR_GAIN_INTEGRATION * ESTIMATEUR_TEMPS_DE_REACTION * ESTIMATEUR_PAS_DE_TEMPS_MOYEN
-	// repr�sente le temps d'anticipation total du syst�me
+	// représente le temps d'anticipation total du systéme
 	//
-	ESTIMATEUR_GAIN_POUSEE = 0.0F; //1.0F;      // Le gain de la pouss�e vers l'acc�l�ration
-	ESTIMATEUR_GAIN_INTEGRATION = 0.90F; // Le gain a l'int�gration de la vitesse en position
+	ESTIMATEUR_GAIN_POUSEE = 0.0F; //1.0F;      // Le gain de la poussée vers l'accélération
+	ESTIMATEUR_GAIN_INTEGRATION = 0.90F; // Le gain a l'intégration de la vitesse en position
 	ESTIMATEUR_TEMPS_DE_REACTION = 3; // Le nombre de tour de boucle d'anticipation
-	ESTIMATEUR_PAS_DE_TEMPS_MOYEN = 1.0F / 102.0F; // 102 la fr�quence r�elle de la centrale
+	ESTIMATEUR_PAS_DE_TEMPS_MOYEN = 1.0F / 102.0F; // 102 la fréquence réelle de la centrale
 	
 	
 	
 	//
-	// S�curit�s
+	// Sécurités
 	//
-	ATTENTE_SONAR_MAXI = 100; // En unit� de trames centrales (10ms)
+	ATTENTE_SONAR_MAXI = 100; // En unité de trames centrales (10ms)
 	
 	//
-	// Variables d'�tats
+	// Variables d'états
 	//
 	for(i = 0; i < 4; i++) {
 		PosLRTA[i]  = 0.0F;  // RAZ positions LRTA
@@ -87,9 +87,9 @@ void Params_Initialise()
 	SonarTropBas = 0;
 	
 	
-	MAX_WAIT_BEF_SEND = 8; // Le nombre de pas avant le r�envoi d'une consigne I2C
-	// doit etre suffisament petit pour pas qu'il se mette en mode s�curit�
-	// exprim� en pas de dizaines de ms
+	MAX_WAIT_BEF_SEND = 8; // Le nombre de pas avant le réenvoi d'une consigne I2C
+	// doit etre suffisament petit pour pas qu'il se mette en mode sécurité
+	// exprimé en pas de dizaines de ms
 	// VALEUR CRITIQUE EXPERIMENTALE: 15
 	
 	
@@ -108,13 +108,13 @@ void Params_Initialise()
 	ROTATION_MAXI = 200; // <= 255 pour garantir le protocole I2C
 	ROTATION_LENTE = 3; // La vitesse de rotation pour les tests & co
 				
-	RAMPE_ROTATION = 700; // La rampe d'acc�l�ration de rotation des moteurs en tr/s^2.
+	RAMPE_ROTATION = 700; // La rampe d'accélération de rotation des moteurs en tr/s^2.
 	RAMPE_DESCENTE = 0.2F; // m/s^2
 	RAMPE_ASCENSION = 0.1F; // m/s^2
 	ALTITUDE_FIN_DECOLLAGE = 0.30F; // m
 
 	//
-	// Param�tres
+	// Paramétres
 	//
 	//--Lacet
 	CONTROLE_LRTA[0] = 1;
@@ -142,9 +142,9 @@ void Params_Initialise()
 	
 	
 	//
-	// Les �carts suivants entrainent un arret d'urgence total !!
+	// Les écarts suivants entrainent un arret d'urgence total !!
 	//   En vol, c'est donc catastrophique
-	//   Ces param�tres peuvent etre s�rr�s sur le banc d'essai,
+	//   Ces paramétres peuvent etre sérrés sur le banc d'essai,
 	//   MAIS DOIVENT ETRE RELACHES EN VOL REEL !!!!!!!!!!
 	ECART_MAXI_A  = CM_EN_M * 50.0F;
 	ECART_MAXI_L  = DEG_EN_RAD * 40.0F;
@@ -152,18 +152,18 @@ void Params_Initialise()
 	
 
 	//
-	// Les param�tres suivant saturent la consigne envoy� par le PID
+	// Les paramétres suivant saturent la consigne envoyé par le PID
 	//   Il doivent donc etre:
 	//     - lache en RT
 	//     - moyen en A
-	//     - rel. s�rr� en L
-	UA_MAX = GAINS_PRO[3] * CM_EN_M * 60.0F; // En centim�tres
+	//     - rel. sérré en L
+	UA_MAX = GAINS_PRO[3] * CM_EN_M * 60.0F; // En centimétres
 	UA_MIN = - UA_MAX;
 	
-	UL_MAX = GAINS_PRO[0] * DEG_EN_RAD * 30.0F; // Degr�es
+	UL_MAX = GAINS_PRO[0] * DEG_EN_RAD * 30.0F; // Degrées
 	UL_MIN = - UL_MAX;
 		
-	URT_MAX = GAINS_PRO[1] * DEG_EN_RAD * 50.0F; // Degr�es
+	URT_MAX = GAINS_PRO[1] * DEG_EN_RAD * 50.0F; // Degrées
 	URT_MIN = - URT_MAX;
 	
 }
