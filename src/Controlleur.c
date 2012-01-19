@@ -9,12 +9,12 @@
 #include <unistd.h>  // New
 #include <stdint.h>  // New
 #include <termios.h>
-#include <i2C.c> //TODO faire un header, intêret?
+#include "i2C.c" //TODO faire un header, intêret?
 
 //void usleep(int us); // New: commented out
 //void close(int id);  // New: commented out
 //size_t getpagesize(void); // New: commented out
-
+//Attention IL faut mettre des pointeurs dans les write.
 //--Variables communes
 int cycle;
 int requests;
@@ -49,7 +49,7 @@ void Controlleur_Initialise(int testMoteurs) {
 
 	printf("Ecriture d'une commande zéro...");
 	fflush(stdout);
-	ret I2C_Envoyer_Commande_Tout_Moteur(buf4);
+	int ret=I2C_Envoyer_Commande_Tout_Moteur(buf4);
 	if (ret < 0) {
 		printf("\nERREUR: write a renvoyé ret=%i au lieu de 12 !\n", ret);
 		fflush(stdout);
@@ -114,9 +114,9 @@ void Controlleur_Envoi(int mode) {
 	/* MEthode non utilisé
 	 * 	requests = 0;
 	for (i = 0; i < 4; i++) {
-		
+
 		//printf("%i, %i, %i, %i VS %i, %i, %i, %i", )
-		
+
 		if (commandeNumerique[i] != derCommandeNumerique[i] || lastSend[i]
 				> MAX_WAIT_BEF_SEND) {
 			derCommandeNumerique[i] = commandeNumerique[i];
@@ -136,23 +136,23 @@ void Controlleur_Envoi(int mode) {
 	buf4[3]=commandeNumerique[3];
 
 	if(modeI2C == 1) {
-		int ret = I2C_Envoyer_Commande_Tout_Moteur(commandeNumerique);
+		int ret = I2C_Envoyer_Commande_Tout_Moteur(buf4);
 		if (ret < 0) {
 			printf("_");
 
 		}
 
 	}
-
+}
 int Test_Moteur(){
 	int NB_ITERATIONS= 50;
 	int WAIT_MS=500;
-	int TEST_SPEED=60;
+	unsigned char buf1[1]={60};
 
 	printf("Rotation moteur 1...");
 	fflush(stdout);
 	for (i = 0; i < NB_ITERATIONS; i++) {
-		I2C_Envoyer_Commande_Moteur()(1, TEST_SPEED);
+		I2C_Envoyer_Commande_Moteur(1, buf1);
 		usleep(WAIT_MS);
 	}
 	printf(" OK\n");
@@ -160,7 +160,7 @@ int Test_Moteur(){
 	printf("Rotation moteur 2...");
 	fflush(stdout);
 	for (i = 0; i < NB_ITERATIONS; i++) {
-		I2C_Envoyer_Commande_Moteur()(2, TEST_SPEED);
+		I2C_Envoyer_Commande_Moteur(2, buf1);
 		usleep(WAIT_MS);
 	}
 	printf(" OK\n");
@@ -168,16 +168,14 @@ int Test_Moteur(){
 	printf("Rotation moteur 3...");
 	fflush(stdout);
 	for (i = 0; i < NB_ITERATIONS; i++) {
-		I2C_Envoyer_Commande_Moteur()(3, TEST_SPEED);
-		usleep(WAIT_MS);
+		I2C_Envoyer_Commande_Moteur(3, buf1);
 	}
 	printf(" OK\n");
 
 	printf("Rotation moteur 4...");
 	fflush(stdout);
 	for (i = 0; i < NB_ITERATIONS; i++) {
-		I2C_Envoyer_Commande_Moteur()(4, TEST_SPEED);
-		usleep(WAIT_MS);
+		I2C_Envoyer_Commande_Moteur(4, buf1);
 	}
 	printf(" OK\n");
 
@@ -188,7 +186,7 @@ int Test_Moteur(){
 }
 int Controlleur_VMoyen() {
 	return (int)(2.5F * (commandeNumerique[0] + commandeNumerique[1] 
-		+ commandeNumerique[2] + commandeNumerique[3]));
+	                                                              + commandeNumerique[2] + commandeNumerique[3]));
 }
 
 void Controlleur_PrintCmd() {
@@ -199,3 +197,4 @@ void Controlleur_PrintCmd() {
 void Controlleur_Termine() {
 	estInitialiseControlleur = 0;
 }
+

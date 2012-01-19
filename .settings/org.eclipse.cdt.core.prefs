@@ -1,0 +1,23 @@
+#Thu Jan 19 02:55:12 CET 2012
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1930095620.560774886/PATH/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1930095620.560774886/PATH/operation=replace
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1930095620.560774886/PATH/value=/usr/local/sbin\:/usr/local/bin\:/usr/games\:/bin\:/usr/bin\:/sbin\:/usr/sbin\:/opt/android-sdk/tools\:/opt/cuda-toolkit/bin\:/usr/lib/perl5/site_perl/bin\:/usr/bin/vendor_perl\:/usr/lib/perl5/vendor_perl/bin\:/usr/bin/core_perl\:/home/dav/PscCodePilote/armv7aToolchain/bin/
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1930095620.560774886/append=true
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1930095620.560774886/appendContributed=true
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1930095620/PATH/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1930095620/PATH/operation=replace
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1930095620/PATH/value=/usr/local/sbin\:/usr/local/bin\:/usr/games\:/bin\:/usr/bin\:/sbin\:/usr/sbin\:/opt/android-sdk/tools\:/opt/cuda-toolkit/bin\:/usr/lib/perl5/site_perl/bin\:/usr/bin/vendor_perl\:/usr/lib/perl5/vendor_perl/bin\:/usr/bin/core_perl\:/home/dav/PscCodePilote/armv7aToolchain/bin/
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1930095620/append=true
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1930095620/appendContributed=true
+indexer/filesToParseUpFront=cstdarg, stdarg.h, stddef.h, sys/resource.h, ctime, sys/types.h, signal.h, cstdio
+indexer/indexAllFiles=true
+indexer/indexOnOpen=true
+indexer/indexUnusedHeadersWithDefaultLang=true
+indexer/indexerId=org.eclipse.cdt.core.fastIndexer
+indexer/skipFilesLargerThanMB=8
+indexer/skipImplicitReferences=false
+indexer/skipMacroReferences=false
+indexer/skipReferences=false
+indexer/skipTypeReferences=false
+indexer/useHeuristicIncludeResolution=true

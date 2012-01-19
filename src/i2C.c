@@ -11,7 +11,7 @@
 #include <fcntl.h>
 #include <linux/i2c-dev.h> /* for I2C_SLAVE */
 #include <stdio.h>
-
+#include <sys/ioctl.h> //pour x86
 int fdc = -1;
 int estInitialiseI2C;
 int I2C_Initialise(){
@@ -28,40 +28,35 @@ int I2C_Initialise(){
 		}
 }
 
-int I2C_Envoyer_Commande_Moteur(int moteur, unsigned char commande){
-	if(commande >255){
-		printf("Commande envoyé au moteur hors de portée");
-						return -1;
+int I2C_Envoyer_Commande_Moteur(int moteur, unsigned char commande[1]){
+
+	switch(moteur){
+	case 1:{
+		ioctl(fdc, I2C_SLAVE, 0x52);
+		write(fdc, commande[0], 1);
+		break;
 	}
-	else{
-		switch(moteur){
-		case 1:{
-			ioctl(fdc, I2C_SLAVE, 0x52);
-			write(fdc, commande, 1);
-			break;
-		}
-		case 2:{
-			ioctl(fdc, I2C_SLAVE, 0x54);
-			write(fdc, commande, 1);
-			break;
-		}
-		case 3:{
-			ioctl(fdc, I2C_SLAVE, 0x56);
-			write(fdc, commande, 1);
-			break;
-		}
-		case 4:{
-			ioctl(fdc, I2C_SLAVE, 0x58);
-			write(fdc, commande, 1);
-			break;
-		}
-		default:{
-			printf("Adresse moteur inconnue");
-			return -1;
-		}
-		}
-		return (0);
+	case 2:{
+		ioctl(fdc, I2C_SLAVE, 0x54);
+		write(fdc, commande[0], 1);
+		break;
 	}
+	case 3:{
+		ioctl(fdc, I2C_SLAVE, 0x56);
+		write(fdc, commande[0], 1);
+		break;
+	}
+	case 4:{
+		ioctl(fdc, I2C_SLAVE, 0x58);
+		write(fdc, commande[0], 1);
+		break;
+	}
+	default:{
+		printf("Adresse moteur inconnue");
+		return -1;
+	}
+	}
+	return (0);
 }
 
 int I2C_Envoyer_Commande_Tout_Moteur(unsigned char commande[4]){

@@ -37,7 +37,7 @@ int CommWiFi_Initialise() {
 	
 	printf("Démarrage de la communication WiFi...");
 	termine = 0;
-	pthread_create(&thread, NULL, CommWiFi, NULL);
+	//pthread_create(&thread, NULL, CommWiFi, NULL);
 	usleep(100*1000); // 100ms
 	return 1;
 	

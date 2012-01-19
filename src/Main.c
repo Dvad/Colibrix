@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 	Maths_Initialise(); // Ne dépend de rien d'autre // Pas de blabla
 	Params_Initialise(); // Après Maths_Initialise(); (peut utiliser des maths) // Pas de blabla
 	Asservissement_Initialise(); // Après Params_Initialise();
-	Pilote_Initialise(); // Après Params, // Pas de blabla
+	//Pilote_Initialise(); // Après Params, // Pas de blabla
 
 	printf(" OK\n");
 
