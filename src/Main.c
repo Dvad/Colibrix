@@ -1,19 +1,19 @@
 #include "Misc.h"
 #include "Maths.h"
 #include "Params.h"
-//#include "Pilote.h"
+#include "Pilote.h"
 #include "Sonar.h"
 #include "Centrale.h"
 #include "Asservissement.h"
 #include "Controlleur.h"
-//#include "CommWifi.h"
+#include "CommWifi.h"
 #include <stdio.h>
 #include <sys/resource.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
-
+#include "i2C.h"
 
 int system(const char *string);
 int atoi(const char * str);
@@ -98,11 +98,11 @@ int main(int argc, char **argv) {
 	fflush(stdout);
 	//system("pkill -9 xuartctl"); // kill tous les process utilisant xuartctl TS7500
 	//usleep(100 * 1000);
-	printf(" OK\n... - A priori, A voir si on en a besoin - Pour l'instant ne fait rien");
+	printf(" OK... - A priori, A voir si on en a besoin - Pour l'instant ne fait rien\n");
 
 	// La fonction suivante émet son propre blabla
-	Controlleur_Initialise(0); // Aprés Params_Initialise(); // Argument: 1 pour allumer les moteurs successivement
 	I2C_Initialise();
+	Controlleur_Initialise(0); // Aprés Params_Initialise() et I2C_initialise; // Argument: 1 pour allumer les moteurs successivement
 
 	//int grnLedOn = 0;
 	//int redLedOn = 0;

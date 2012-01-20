@@ -125,7 +125,10 @@ int DUREE_MOYENNAGE_BARO;
 float GAINS_PRO[4]; // Les gains proportionnels pour la commande en LRTA
 float GAINS_INT[4]; // intégraux
 float GAINS_DER[4]; // dérivées
-
+//
+//Paramètres du Sonar SRF08
+unsigned char GAIN_MAX_SONAR;
+unsigned char RANGE_SONAR;
 //
 // Liste des fonctions
 //

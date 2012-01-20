@@ -140,7 +140,9 @@ void Params_Initialise()
 	GAINS_INT[3] = 0.0F;
 	GAINS_DER[3] = 3.0F;
 	
-	
+	//--Sonar
+	GAIN_MAX_SONAR=31;
+	RANGE_SONAR = 120;
 	//
 	// Les écarts suivants entrainent un arret d'urgence total !!
 	//   En vol, c'est donc catastrophique

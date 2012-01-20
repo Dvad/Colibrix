@@ -36,7 +36,7 @@ void Controlleur_Initialise(int testMoteurs) {
 	estInitialiseControlleur = 0;
 
 	if (estInitialiseI2C==0){
-		printf("ERREUR:I2C non initialisé");
+		printf("ERREUR:I2C non initialisé\n");
 		return;
 	}
 	cycle = 0;
