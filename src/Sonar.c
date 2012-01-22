@@ -40,7 +40,7 @@ char valChar[4]; // Stocke temporairement la valeur sous forme char
 int ret;
 int donneesDisponibles;
 int ancAltiPouces;
-int altiPouces;
+int altiPouce;
 
 void Sonar_Initialise(int dev) {
 
@@ -89,7 +89,7 @@ void Sonar_Initialise(int dev) {
 
 	valChar[3] = '\0';
 
-	altiPouces = 0;
+	altiPouce = 0;
 	ancAltiPouces = 0;
 
 	nbValeursValables = 0;
@@ -203,25 +203,25 @@ void lireTrameSonar() {
 	valChar[0] = bufferCircuSonar[(indexLectureSonar + 1) % SONAR_TAILLE_BUFFER];
 	valChar[1] = bufferCircuSonar[(indexLectureSonar + 2) % SONAR_TAILLE_BUFFER];
 	valChar[2] = bufferCircuSonar[(indexLectureSonar + 3) % SONAR_TAILLE_BUFFER];
-	altiPouces = atoi(valChar);
-	if (altiPouces == 0) {
+	alti = atoi(valChar);
+	if (alti == 0) {
 		erreursSonar++;
 	}
 
 	// 
 	// Saut maxi: MAX_SONAR_JUMP 
 	//	
-	if (altiPouces > ancAltiPouces + SONAR_SAUT_MAXI) {
-		altiPouces = ancAltiPouces + SONAR_SAUT_MAXI;
-	} else if (altiPouces < ancAltiPouces - SONAR_SAUT_MAXI) {
-		altiPouces = ancAltiPouces - SONAR_SAUT_MAXI;
+	if (altiPouce > ancAltiPouces + SONAR_SAUT_MAXI) {
+		altiPouce = ancAltiPouces + SONAR_SAUT_MAXI;
+	} else if (alti < ancAltiPouces - SONAR_SAUT_MAXI) {
+		altiPouce = ancAltiPouces - SONAR_SAUT_MAXI;
 	}
-	ancAltiPouces = altiPouces;
+	ancAltiPouces = altiPouce;
 
 	SonarTropBas = 0;
 	SonarTropHaut = 0;
 	
-	if (altiPouces <= 6) {
+	if (altiPouce <= 6) {
 		// Le sonar est trop proche du sol
 		SonarTropBas = 1;
 		nbValeursValables = 0;
@@ -229,7 +229,7 @@ void lireTrameSonar() {
 		PosLRTA[3] = 0.0;
 		derniereAltitudeMoyenneEstValable = 0;
 		
-	} else if (altiPouces >= 250) { // En réalité c'est 254, 
+	} else if (altiPouce >= 250) { // En réalité c'est 254,
 		// mais on prend 250 pour etre tranquille
 		// Le sonar est trop loin du sol
 		SonarTropHaut = 1;
@@ -245,7 +245,7 @@ void lireTrameSonar() {
 		//
 		//--Sytéme de moyenne sur l'altitude
 		//
-		alti = 0.01F * 2.54F * (float)altiPouces; // Conversion de pouces en métres
+		alti = 0.01F * 2.54F * (float)altiPouce; // Conversion de pouces en métres
 		nbValeursValables++;
 		dernieresAltitudes[indexDerniereAltitude] = alti;
 		indexDerniereAltitude++;

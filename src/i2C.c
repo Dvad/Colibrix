@@ -94,7 +94,7 @@ int I2C_Envoyer_Pulse_Sonar(){
 	ioctl(fdc,I2C_SLAVE, 0xE0);
 	commandePulseSonar[0]=0x55; //Pour une réponse en cm voir datasheet
 	commandePulseSonar[1]=GAIN_MAX_SONAR;
-	commandePulseSonar[2]=RANGE_SONAR;
+	commandePulseSonar[2]=RANGE_SONAR_REGISTER;
 	write(fdc,commandePulseSonar,3);
 	return 0;
 }
@@ -124,13 +124,14 @@ int GotSonarData(){
 		printf("TestDonnéeSonar:Erreur de lecture.\n");
 		return -1;
 	}
-	if (rbuf==255)return 0;
+	if (rbuf[0]==255)return 0;
 	else return 1;
 
 }
 
 	//
-	//Renvoie l'entier représentant la dernière lecture Sonar, -1 en cas d'erreur de lecture,-2 en cas de mesure non terminé, il faut alors continuer de tenter de lire une valeur correcte.
+	//Renvoie l'entier représentant la dernière lecture Sonar, -1 en cas d'erreur de lecture,
+    //-2 en cas de mesure non terminé, il faut alors continuer de tenter de lire une valeur correcte.
 	//
 int I2C_Envoyer_Lecture_Sonar(){
 

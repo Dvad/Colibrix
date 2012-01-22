@@ -30,13 +30,10 @@ void Params_Initialise()
 	
 	//
 	// Constantes d'optimisation logicielle
-	SONAR_SAUT_MAXI = 1; // (JUMP = 1 <-> 0.6 m/s)
-	TEST_SONAR_TOUT_LES = 4; // En nombre de trame. freq centrale = 100, freq sonar = 20 => tout les 5
+
 	DUREE_MOYENNAGE_ALTITUDE = 4; // En unité de pas sonar (50ms) | 10==0.5s
 	VERIFICATION_INPUT_CONSOLE_TOUT_LES = 20; // 20 <=> 100/20 = 5 Hz
-	SONAR_ALTI_MINI = 0.15F;
-	INVERSE_INTERVALLE_TEMPS_DERIVATION_SONAR = 20.0F; // La fréquence du sonar
-	
+	TEST_SONAR_TOUT_LES = 4; // En nombre de trame. freq centrale = 100, freq sonar = 20 => tout les 5
 	SONAR_IRQ = 300; // 0 (hardware), 200, 300, 400
 	CENTRALE_IRQ = 300; // 0 (hardware), 200, 300, 400
 	BUF_CTR = 2; // 1 ou 2, en facteur de la taille buffer
@@ -141,8 +138,12 @@ void Params_Initialise()
 	GAINS_DER[3] = 3.0F;
 	
 	//--Sonar
-	GAIN_MAX_SONAR=31;
-	RANGE_SONAR = 120;
+	GAIN_MAX_SONAR=31; //entre 0 et 31
+	RANGE_SONAR_REGISTER = 120;
+	RANGE_SONAR_EN_METRE=((RANGE_SONAR_REGISTER * 43) + 43)*0.01;
+	SONAR_SAUT_MAXI = 1; // (1 m/s)
+	SONAR_ALTI_MINI = 0.05F; //En Metre
+	INVERSE_INTERVALLE_TEMPS_DERIVATION_SONAR = RANGE_SONAR_EN_METRE / 340; // La fréquence THEORIQUE du sonar
 	//
 	// Les écarts suivants entrainent un arret d'urgence total !!
 	//   En vol, c'est donc catastrophique

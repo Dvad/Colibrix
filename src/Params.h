@@ -128,7 +128,8 @@ float GAINS_DER[4]; // dérivées
 //
 //Paramètres du Sonar SRF08
 unsigned char GAIN_MAX_SONAR;
-unsigned char RANGE_SONAR;
+unsigned char RANGE_SONAR_REGISTER;
+float RANGE_SONAR_EN_METRE;
 //
 // Liste des fonctions
 //
