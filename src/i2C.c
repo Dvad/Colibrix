@@ -12,6 +12,7 @@
 #include <linux/i2c-dev.h>/* for I2C_SLAVE */
 #include <linux/i2c.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <sys/ioctl.h> //pour x86
 #include "i2C.h"
 #include "Params.h"
