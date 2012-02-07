@@ -2,7 +2,7 @@
 #include "Maths.h"
 #include "Params.h"
 #include "Pilote.h"
-#include "Sonar.h"
+#include "SonarNew.h"
 #include "Centrale.h"
 #include "Asservissement.h"
 #include "Controlleur.h"
@@ -27,7 +27,7 @@ void videBufferSonar() {
 	printf("Vidage buffer sonar...");
 	fflush(stdout);
 	for (i = 0; i < 100; i++) {
-		Sonar_CheckData(0);
+		//Sonar_CheckData(0);
 	}
 	printf(" OK\n");
 }
@@ -616,6 +616,7 @@ int main(int argc, char **argv) {
 		}
 
 		dernierTestSonar++;
+		usleep(10000); //TODO Enlever ca une fois les test sonar terminé.
 		if (readSonar && state != -1 && dernierTestSonar >= TEST_SONAR_TOUT_LES
 				&& !trameRate) {
 			dernierTestSonar = 0;
@@ -624,12 +625,12 @@ int main(int argc, char **argv) {
 			// On regarde si on a une trame sonar
 			//
 			appelsSonar++;
-			Sonar_CheckData(1);
+			lireTrameSonar();
 			if (NouvelleTrameSonar) {
 				NouvelleTrameSonar = 0;
-				attenteSonar = 0;
+				attenteSonar = 0; // important pour checker les erreurs
 
-				//--Tant mieux, l'altitude a été mis-é-jour
+				//--Tant mieux, l'altitude a été mis-à-jour
 				if (SonarTropBas) {
 					if (state == 4) {
 						printf("\nDANGER: Trop bas");
@@ -651,7 +652,7 @@ int main(int argc, char **argv) {
 				if (attenteSonar > ATTENTE_SONAR_MAXI) {
 					printf("\nERREUR: Pas de données sonar !\n");
 					fflush(stdout);
-					state = -1;
+					//state = -1;
 				}
 			}
 		}
@@ -956,8 +957,8 @@ int main(int argc, char **argv) {
 	printf("Fermeture du programme...\n");
 	fflush(stdout);
 
-	Sonar_Termine();
-	Centrale_Termine();
+	I2C_Termine();
+	//Centrale_Termine();
 	Controlleur_Termine();
 
 	Pilote_Termine();

@@ -7,7 +7,9 @@
  
 int i;
 
+//Constante de debug
 //
+int DEBUG_SONAR;
 // Constantes mécaniques
 //
 float I_ROUL;
