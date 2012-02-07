@@ -6,7 +6,7 @@
 #include "Centrale.h"
 #include "Asservissement.h"
 #include "Controlleur.h"
-#include "CommWifi.h"
+//#include "CommWifi.h"
 #include <stdio.h>
 #include <sys/resource.h>
 #include <errno.h>
@@ -616,7 +616,6 @@ int main(int argc, char **argv) {
 		}
 
 		dernierTestSonar++;
-		usleep(10000); //TODO Enlever ca une fois les test sonar terminé.
 		if (readSonar && state != -1 && dernierTestSonar >= TEST_SONAR_TOUT_LES
 				&& !trameRate) {
 			dernierTestSonar = 0;
@@ -821,7 +820,7 @@ int main(int argc, char **argv) {
 		//
 		//////////////////////////////////////////////////////////////////
 
-		if (dispUneFois) {
+		if (	dispUneFois) {
 			dispUneFois = 0;
 
 			//

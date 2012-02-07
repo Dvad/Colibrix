@@ -68,54 +68,26 @@ float zeroPosLRT[3];
 
 
 
-void Centrale_Initialise(int dev) {
-
+void Centrale_Initialise() {
+	char* adresse="/dev/ttyO0";
 	printf("Création serveur centrale...\n");
-
-	// IRQ: 29: XUART
-	// IRQ: 30: CAN
-	
-	// 200hz => BIEN
-	// 300hz => UN PEU MIEUX QUE 200
-	// 400hz => "PARFAIT"
-	// 1000hz => BIEN
-	
-	// /usr/local/sbin/
-	
-	if (CENTRALE_IRQ == 200) {
-		system("xuartctl --port=0 --speed=460800 --server --irq=200hz");
-	} else if (CENTRALE_IRQ == 300) {
-		system("xuartctl --port=0 --speed=460800 --server --irq=300hz");
-	} else if (CENTRALE_IRQ == 400) {
-		system("xuartctl --port=0 --speed=460800 --server --irq=400hz");
-	} else {
-		system("xuartctl --port=0 --speed=460800 --server");
-	}
-	usleep(100 * 1000);
-
-	if (dev == -1) { // Laisser l'utilisateur choisir
-		dev = askIntValue("Numéro device ci dessus");
-	}
-	
-	char* adresse;
-	if (dev == 0) {
-		adresse = "/dev/pts/0";
-	} else if (dev == 1) {
-		adresse = "/dev/pts/1";
-	} else if (dev == 2) {
-		adresse = "/dev/pts/2";
-	} else if (dev == 3) {
-		adresse = "/dev/pts/3";
-	} else {
-		printf("ERREUR GRAVE: DEVICE NON DANS LA LISTE");
+	//ATTENTION S'ASSURER AU BOOT QUE TOUT EST BIEN CONFIGURER AVEC STTY
+	//stty 460800 cstopb</dev/ttyO0 bauds
+	if(adresse==NULL){
+		printf("Veuillez fournir l'adresse de la centrale en argument");
 		return;
 	}
-	
-	printf("Device centrale: %i\n", dev);
-	printf("Ouverture port centrale...");
-	fdCentrale = open(adresse, O_RDWR | O_NONBLOCK); // O_RDWR
-	printf(" OK\n");
+	//On choisit l'adresse qu'on hardcodera une fois détérminé
 
+	printf("Device centrale: %s\n", adresse);
+	printf("Ouverture port centrale...");
+	fdCentrale = open(adresse, O_RDONLY );//| O_NONBLOCK | O_NOCTTY); // O_RDWR // En vision datation il faudra la rendre bloquante!
+	if (fdCentrale != NULL){
+		printf(" OK\n");
+	}
+	else{
+		printf("Erreur lors de l'ouverture du port centrale");
+	}
 	indexEcritureCentrale = 0;
 	indexLectureCentrale = 0;
 	donneesDisponibles = 0;
@@ -123,15 +95,12 @@ void Centrale_Initialise(int dev) {
 	recherchesCentrale = 0;
 	erreursCentrale = 0;
 	estInitialiseCentrale = 1;
-	
 	//BARO
 	indexHistBaro=0;
 	zeroBaro=0;
-	
 	for(i = 0; i < 3; i++) {
 		ancVitLRT[i] = 0;
 	}
-
 }
 
 void Centrale_Termine() {
@@ -492,13 +461,14 @@ float getFloatAtOffset(int offset) {
 	// -> On est dans un buffer circulaire, attention aux indices trop grand..
 
 	for (i = 0; i < 4; i++) {
-		tempEightBytes[i] = bufferCircuCentrale[(indexLectureCentrale + offset + i + 4) % CENTRALE_TAILLE_BUFFER];
-		tempEightBytes[i+4] = bufferCircuCentrale[(indexLectureCentrale + offset + i) % CENTRALE_TAILLE_BUFFER];
+		//tempEightBytes[i] = bufferCircuCentrale[(indexLectureCentrale + offset + i + 4) % CENTRALE_TAILLE_BUFFER];
+		//tempEightBytes[i+4] = bufferCircuCentrale[(indexLectureCentrale + offset + i) % CENTRALE_TAILLE_BUFFER];
+		//devient donc (David
+		tempEightBytes[i] = bufferCircuCentrale[(indexLectureCentrale + offset + i) % CENTRALE_TAILLE_BUFFER];
+		tempEightBytes[i+4] = bufferCircuCentrale[(indexLectureCentrale + offset + i + 4) % CENTRALE_TAILLE_BUFFER];
 	}
 	memcpy((void*)&tempDouble, (void*)tempEightBytes, 8);
-
-	return (float)tempDouble;
-
+	return ((float)tempDouble);
 	/*
 	 if (indexLectureCentrale + offset + 3 < CENTRALE_TAILLE_BUFFER) {
 	 //--Les 4 premiers octets sont alignés
@@ -513,7 +483,7 @@ float getFloatAtOffset(int offset) {
 	 }
 	 memcpy((void*)(&result + 4), (void*)(&tempFourBytes), 4);
 	 }
-	 
+
 	 if (indexLectureCentrale + offset + 7 < CENTRALE_TAILLE_BUFFER) {
 	 // Les 4 derniers octets sont alignés
 	 memcpy((void*)(&result), (void*)(&bufferCircuCentrale + indexLectureCentrale + offset
@@ -538,4 +508,3 @@ float getFloatAtOffset(int offset) {
 	//double result;
 	//memcpy((void*)&result, (void*)bytes, sizeof(bytes));
 }
-
