@@ -191,6 +191,7 @@ int main(int argc, char **argv) {
 	//
 	//
 	//---------------------------------------------------------------------------
+		Test_Moteur();
 	printf("Initialisation terminée !\n");
 	fflush(stdout);
 	Misc_ResetElapsedUs();

@@ -106,7 +106,7 @@ void Params_Initialise()
 	// Les deux valeurs suivantes sont en protocoles I2C !!!
 	// Il y a un facteur 10: Ci2c = 0.1 * Creel
 	ROTATION_MAXI = 200; // <= 255 pour garantir le protocole I2C
-	ROTATION_LENTE = 3; // La vitesse de rotation pour les tests & co
+	ROTATION_LENTE = 15; // La vitesse de rotation pour les tests & co
 				
 	RAMPE_ROTATION = 700; // La rampe d'accélération de rotation des moteurs en tr/s^2.
 	RAMPE_DESCENTE = 0.2F; // m/s^2

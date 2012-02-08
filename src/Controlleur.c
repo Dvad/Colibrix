@@ -145,9 +145,9 @@ void Controlleur_Envoi(int mode) {
 	}
 }
 int Test_Moteur(){
-	int NB_ITERATIONS= 50;
+	int NB_ITERATIONS= 500;
 	int WAIT_MS=500;
-	unsigned char buf1[1]={60};
+	unsigned char buf1[1]={0x3C};
 
 	printf("Rotation moteur 1...");
 	fflush(stdout);
@@ -169,6 +169,7 @@ int Test_Moteur(){
 	fflush(stdout);
 	for (i = 0; i < NB_ITERATIONS; i++) {
 		I2C_Envoyer_Commande_Moteur(3, buf1);
+		usleep(WAIT_MS);
 	}
 	printf(" OK\n");
 
@@ -176,6 +177,7 @@ int Test_Moteur(){
 	fflush(stdout);
 	for (i = 0; i < NB_ITERATIONS; i++) {
 		I2C_Envoyer_Commande_Moteur(4, buf1);
+		usleep(WAIT_MS);
 	}
 	printf(" OK\n");
 

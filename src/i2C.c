@@ -60,23 +60,24 @@ int I2C_Envoyer_Commande_Moteur(int moteur, unsigned char commande[1]){
 
 	switch(moteur){
 	case 1:{
-		ioctl(fdc, I2C_SLAVE, 0x52); //TODO vérifier que l'adresse est correctement écrite, la gumst a tendance à inverser les bit lors de l'envoi ex
-		write(fdc, commande[0], 1);  // 0xE0=0b1110 0000 envoi en réalité 0x70=0b0111 0000
+		ioctl(fdc, I2C_SLAVE, 0x29); //Attention les adresses I2C sont codé sur 7 bit. il faut donc donnée comme adresse les 7 premiers bit de l'adresse généralement fourni par le constructeur
+		write(fdc, &commande[0], 1);  // Le constructeur fournit en fait l'adresse avec le bit d'écritéure à 0. Ainsi 0xE0=0b111 0000 devient 0x70=0b11 1000
+		//Attention a bien mettre un pointeur dans write, et apparemment un tableau de char de longeur un n'est pas un pointeur...
 		break;
 	}
 	case 2:{
-		ioctl(fdc, I2C_SLAVE, 0x54);
-		write(fdc, commande[0], 1);
+		ioctl(fdc, I2C_SLAVE, 0x2A);
+		write(fdc, &commande[0], 1);
 		break;
 	}
 	case 3:{
-		ioctl(fdc, I2C_SLAVE, 0x56);
-		write(fdc, commande[0], 1);
+		ioctl(fdc, I2C_SLAVE, 0x2B);
+		write(fdc, &commande[0], 1);
 		break;
 	}
 	case 4:{
-		ioctl(fdc, I2C_SLAVE, 0x58);
-		write(fdc, commande[0], 1);
+		ioctl(fdc, I2C_SLAVE, 0x2C);
+		write(fdc, &commande[0], 1);
 		break;
 	}
 	default:{
@@ -88,17 +89,17 @@ int I2C_Envoyer_Commande_Moteur(int moteur, unsigned char commande[1]){
 }
 
 int I2C_Envoyer_Commande_Tout_Moteur(unsigned char commande[4]){
-	ioctl(fdc, I2C_SLAVE, 0x52);
-	write(fdc, commande[0], 1);
+	ioctl(fdc, I2C_SLAVE, 0x29);
+	write(fdc, &commande[0], 1);
 
-	ioctl(fdc, I2C_SLAVE, 0x54);
-	write(fdc, commande[1], 1);
+	ioctl(fdc, I2C_SLAVE, 0x2A);
+	write(fdc, &commande[1], 1);
 
-	ioctl(fdc, I2C_SLAVE, 0x56);
-	write(fdc, commande[2], 1);
+	ioctl(fdc, I2C_SLAVE, 0x2B);
+	write(fdc, &commande[2], 1);
 
-	ioctl(fdc, I2C_SLAVE, 0x58);
-	write(fdc, commande[3], 1);
+	ioctl(fdc, I2C_SLAVE, 0x2C);
+	write(fdc, &commande[3], 1);
 
 	return 0;
 }
