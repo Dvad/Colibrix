@@ -6,7 +6,7 @@
 #include "Centrale.h"
 #include "Asservissement.h"
 #include "Controlleur.h"
-//#include "CommWifi.h"
+#include "CommWifi.h"
 #include <stdio.h>
 #include <sys/resource.h>
 #include <errno.h>
@@ -14,13 +14,15 @@
 #include <unistd.h>
 #include <string.h>
 #include "i2C.h"
-
+#include <sys/time.h>
 int system(const char *string);
 int atoi(const char * str);
 float atof(const char * str);
 //void usleep(int us);
 int getpid();
-
+struct timeval datation;
+long long int endTime=0;
+long long int startTime=0;
 
 
 void videBufferSonar() {
@@ -51,7 +53,7 @@ int main(int argc, char **argv) {
 
 	printf("\n");
 	printf("\n================================================");
-	printf("\n=====    XMicroDrone - Controlleur V1.1    =====");
+	printf("\n=====    XMicroDrone - Controlleur Gumstix     =====");
 	printf("\n================================================");
 	printf("\n");
 
@@ -109,7 +111,7 @@ int main(int argc, char **argv) {
 	//Misc_SetRedLed(0); //TS7500
 	//Misc_SetGrnLed(0);
 
-	if (0) {
+	if (1) {
 		CommWiFi_Initialise(); // Emet son propre blabla
 	}
 
@@ -127,7 +129,9 @@ int main(int argc, char **argv) {
 		printf("ERREUR: setpriority\n");
 	}
 
-	Centrale_Initialise(premierDevice); // Argument: le dev par défaut, -1 pour laisser l'utilisateur choisir
+	if(Centrale_Initialise(premierDevice)<0){
+		return -1;
+	}
 
 	Sonar_Initialise(premierDevice + 1); // Argument: le dev par défaut, -1 pour laisser l'utilisateur choisir
 
@@ -191,7 +195,7 @@ int main(int argc, char **argv) {
 	//
 	//
 	//---------------------------------------------------------------------------
-		Test_Moteur();
+	Test_Moteur();
 	printf("Initialisation terminée !\n");
 	fflush(stdout);
 	Misc_ResetElapsedUs();
@@ -232,6 +236,8 @@ int main(int argc, char **argv) {
 				char *cptr;
 				char buffer[MAX_COMMAND_LENGTH]; // Ex 256 au lieu de MAX_COMMAND_LENGTH
 				cptr = fgets(buffer, MAX_COMMAND_LENGTH, stdin); // Ex 256 au lieu de MAX_COMMAND_LENGTH
+				CommWifi_AppliqueEtat();
+
 				if (cptr != NULL) {
 
 					attenteSignal = 0; // Watchdog: la communication est active !
@@ -423,6 +429,7 @@ int main(int argc, char **argv) {
 						} else {
 							printf("ERREUR: La commande ne peut étre appliqué dans ce contexte.\n");
 						}
+						isThereAskedState=0;
 						fflush(stdout);
 					}
 					//------------------------------------------------
@@ -435,6 +442,7 @@ int main(int argc, char **argv) {
 						} else {
 							printf("ERREUR: La commande ne peut étre appliqué dans ce contexte.\n");
 						}
+						isThereAskedState=0;
 						fflush(stdout);
 					}
 					//------------------------------------------------
@@ -514,7 +522,7 @@ int main(int argc, char **argv) {
 					//------------------------------------------------
 					else if (dst[0] == 'u') {
 						BUF_CTR++;
-						if (BUF_CTR == 3) {
+						if (BUF_CTR == 6) {
 							BUF_CTR = 1;
 						}
 						printf(
@@ -592,6 +600,9 @@ int main(int argc, char **argv) {
 			// On attend une nouvelle trame centrale
 			//
 			attenteCentrale = 0;
+			gettimeofday(&datation,NULL);
+			endTime=datation.tv_sec *1000000 + (datation.tv_usec);
+			//printf("\n Temps entre deux appels central: %lli \n",endTime-startTime);
 			for (;;) {
 
 				appelsCentrale++;
@@ -615,7 +626,8 @@ int main(int argc, char **argv) {
 				}
 			}
 		}
-
+		gettimeofday(&datation,NULL);
+		startTime=datation.tv_sec *1000000 + (datation.tv_usec);
 		dernierTestSonar++;
 		if (readSonar && state != -1 && dernierTestSonar >= TEST_SONAR_TOUT_LES
 				&& !trameRate) {
@@ -649,6 +661,9 @@ int main(int argc, char **argv) {
 			} else {
 				//--Tant pis, nous avons toujours l'ancienne valeur
 				attenteSonar++;
+				if (attenteSonar > 7) { //Si on attend plus de 70 ms on renvoi un pulse Sonar
+					I2C_Envoyer_Pulse_Sonar();
+				}
 				if (attenteSonar > ATTENTE_SONAR_MAXI) {
 					printf("\nERREUR: Pas de données sonar !\n");
 					fflush(stdout);
@@ -888,7 +903,7 @@ int main(int argc, char **argv) {
 				//
 				// Lacet, roulis, tangage
 				//
-				printf(" L: %3i/%3ié  R: %2i/%2ié  T: %2i/%2ié", (int)(57
+				printf(" L: %3i/%3i°  R: %2i/%2i°  T: %2i/%2i°", (int)(57
 						* PosLRTA[0]), (int)(57 * ConsLRTA[0]), (int)(57
 						* PosLRTA[1]), (int)(57 * ConsLRTA[1]), (int)(57
 						* PosLRTA[2]), (int)(57 * ConsLRTA[2]));
