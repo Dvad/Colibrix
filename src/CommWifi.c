@@ -49,8 +49,8 @@ int CommWiFi_Initialise() {
 	pthread_create(&thread, NULL, CommWiFi, NULL);
 	usleep(100*1000); // 100ms
 	return 1;
-	gettimeofday(&datation,NULL);
-	dateWifiInitial=datation.tv_sec *1000000 + (datation.tv_usec);
+	gettimeofday(&datationWifi,NULL);
+	dateWifiInitial=datationWifi.tv_sec *1000000 + (datationWifi.tv_usec);
 	controlWifi=0;
 	//return -1;
 
@@ -209,8 +209,8 @@ void* CommWiFi(void* data) {
 			//printf("\nWIFI: Réception de l'ordre : %s\n", msg);
 			//fflush(stdout);
 			//Ces quelques lignes permettent d'envoyer des données à la base.
-			gettimeofday(&datation,NULL);
-			dateWifi=datation.tv_sec *1000000 + (datation.tv_usec);
+			gettimeofday(&datationWifi,NULL);
+			dateWifi=datationWifi.tv_sec *1000000 + (datationWifi.tv_usec);
 			dateRelativeWifi=(int)dateWifi-(int)dateWifiInitial;
 
 			snprintf(msgwifienv,MAX_LENGTH_S+1,"D"
