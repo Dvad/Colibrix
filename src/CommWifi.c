@@ -22,13 +22,6 @@
 // number of incoming cnxs to buffer
 #define BACKLOG 1 
 
-/*
-void close(int id);
-void usleep(int us);
-int read(int id, unsigned char* buf, int length);
-*/
-
-
 pthread_t thread;
 void* CommWiFi(void* data);
 int termine;
@@ -38,7 +31,7 @@ int isThereAskedState=0;
 struct timeval datationWifi;
 long long int dateWifiInitial;
 long long int dateWifi;
-int dateRelativeWifi;
+long long int dateRelativeWifi;
 int controlWifi;
 
 int CommWiFi_Initialise() {
@@ -46,12 +39,15 @@ int CommWiFi_Initialise() {
 	
 	printf("Démarrage de la communication WiFi...");
 	termine = 0;
+	gettimeofday(&datationWifi,NULL);
+	dateWifiInitial=datationWifi.tv_sec *1000000 + (datationWifi.tv_usec);
+	printf("\nDate Wifi Initial : %lli \n",dateWifiInitial);
+	fflush(stdout);
+	controlWifi=0;
 	pthread_create(&thread, NULL, CommWiFi, NULL);
 	usleep(100*1000); // 100ms
 	return 1;
-	gettimeofday(&datationWifi,NULL);
-	dateWifiInitial=datationWifi.tv_sec *1000000 + (datationWifi.tv_usec);
-	controlWifi=0;
+
 	//return -1;
 
 }
@@ -74,7 +70,8 @@ void* CommWiFi(void* data) {
 	char msgwifienv[MAX_LENGTH_S+1];
 	char msg[MAX_LENGTH + 1]; //buffer contenant les données recus.
 	int CHARS_PAR_INT = 6; //nb de caracére représentant les ordres d'assiette.
-
+	msg[MAX_LENGTH]= '\0';// important : caractére de fin de message
+	msgwifienv[MAX_LENGTH_S]='\0';
 	//
 	// Initialize the socket
 	//
@@ -150,7 +147,7 @@ void* CommWiFi(void* data) {
 			// do something with it : get 3 chars, and give them back 
 
 			read(new_fd, msg,MAX_LENGTH); //lit ce qui arrive sur le socket
-			msg[MAX_LENGTH]= '\0';// important : caractére de fin de message
+
 
 			attenteSignal = 0; // La liaison est active ! (Bah oui! on a recu des données non?)
 
@@ -211,14 +208,14 @@ void* CommWiFi(void* data) {
 			//Ces quelques lignes permettent d'envoyer des données à la base.
 			gettimeofday(&datationWifi,NULL);
 			dateWifi=datationWifi.tv_sec *1000000 + (datationWifi.tv_usec);
-			dateRelativeWifi=(int)dateWifi-(int)dateWifiInitial;
+			dateRelativeWifi=(dateWifi-dateWifiInitial);
 
-			snprintf(msgwifienv,MAX_LENGTH_S+1,"D"
+			snprintf(msgwifienv,MAX_LENGTH_S,"D"
 					"CL%+06.6iR%+06.6iT%+06.6iA%+06.6i"
 					"PL%+06.6iR%+06.6iT%+06.6iA%+06.6i"
 					"UL%+06.6iR%+06.6iT%+06.6iA%+06.6i"
 					"OL%+06.6iR%+06.6iT%+06.6iA%+06.6i"
-					"E%+iD%010.10i"+'\0'
+					"E%+iD%+.10lli"
 					/*"Ac1%fAc2%fAc3%f"
 					"Vi1%fVi2%fVi3%f"
 					"Po1%fPo2%fPo3%f"
