@@ -57,18 +57,7 @@ int main(int argc, char **argv) {
 	printf("\n================================================");
 	printf("\n");
 
-	//
-	// Récupérons les numéros de devices séries (paramétre optionnel)
-	//
-	int premierDevice = 0; // La valeur par défaut, qu'on utilisera s'il n'y a pas d'arguments
-	if (argc >= 2) {
-		int arg = atoi(argv[1]);
-		if (arg >= 0 && arg <= 2) {
-			premierDevice = arg;
-		} else {
-			printf("Argument devices hors de portée.\n");
-		}
-	}
+
 
 	//---------------------------------------------------------------------------
 	//
@@ -96,20 +85,10 @@ int main(int argc, char **argv) {
 
 	printf(" OK\n");
 
-	printf("Fermeture des serveurs port séries...");
-	fflush(stdout);
-	//system("pkill -9 xuartctl"); // kill tous les process utilisant xuartctl TS7500
-	//usleep(100 * 1000);
-	printf(" OK... - A priori, A voir si on en a besoin - Pour l'instant ne fait rien\n");
-
 	// La fonction suivante émet son propre blabla
 	I2C_Initialise();
 	Controlleur_Initialise(0); // Aprés Params_Initialise() et I2C_initialise; // Argument: 1 pour allumer les moteurs successivement
 
-	//int grnLedOn = 0;
-	//int redLedOn = 0;
-	//Misc_SetRedLed(0); //TS7500
-	//Misc_SetGrnLed(0);
 
 	if (1) {
 		CommWiFi_Initialise(); // Emet son propre blabla
@@ -129,25 +108,10 @@ int main(int argc, char **argv) {
 		printf("ERREUR: setpriority\n");
 	}
 
-	if(Centrale_Initialise(premierDevice)<0){
+	if(Centrale_Initialise()<0){
 		return -1;
 	}
-
-	Sonar_Initialise(premierDevice + 1); // Argument: le dev par défaut, -1 pour laisser l'utilisateur choisir
-
-	// On se replace a -10
-	if (usePrio && setpriority(PRIO_PROCESS, getpid(), -10)) {
-		printf("ERREUR: setpriority !\n");
-	}
-
-	printf("Merci de vérifier les numéros de devices ci-dessus\n");
-	if (usePrio) {
-		printf("ET de vous assurer que la priorité du process ts5700ctl est strictement négative !\n");
-	}
-
-	if (0) {
-		Misc_WaitEnter();
-	}
+	Sonar_Initialise();
 
 	float tempsSCum = 0;
 	int dispType = 1; // ----------------------------------
@@ -185,7 +149,7 @@ int main(int argc, char **argv) {
 	char chSETAD[] = "set ad"; // Régler le gain altitude dérivé
 
 
-	//videBufferSonar(); TODO Attention ici il faudra décommenter
+	//videBufferSonar(); TODO Pas de buffer sonar.
 	
 
 	//---------------------------------------------------------------------------
@@ -196,6 +160,20 @@ int main(int argc, char **argv) {
 	//
 	//---------------------------------------------------------------------------
 	Test_Moteur();
+	printf("Initialisation constante de position... OK\n");
+	//--RAZ attitude et position
+	Centrale_RAZAttitude();
+	//Centrale_RAZPosition();
+
+	videBufferSonar();
+
+
+	//--RAZ des consignes
+	ConsLRTA[0] = 0.0F; // 0 en lacet
+	ConsLRTA[3] = 0.0F; // 0 en altitude
+	if (ConsLRTA[1] != 0.0F || ConsLRTA[2] != 0) {
+		printf("\n\nWARNING: Initialisé avec consignes RT non nulles !!\n\n");
+	}
 	printf("Initialisation terminée !\n");
 	fflush(stdout);
 	Misc_ResetElapsedUs();
@@ -602,7 +580,7 @@ int main(int argc, char **argv) {
 			attenteCentrale = 0;
 			gettimeofday(&datation,NULL);
 			endTime=datation.tv_sec *1000000 + (datation.tv_usec);
-			//printf("\n Temps entre deux appels central: %lli \n",endTime-startTime);
+			printf("\n Temps entre deux appels central: %lli \n",endTime-startTime);
 			for (;;) {
 
 				appelsCentrale++;
