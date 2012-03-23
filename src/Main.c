@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
 
 	printf("\n");
 	printf("\n================================================");
-	printf("\n=====    XMicroDrone - Controlleur Gumstix     =====");
+	printf("\n=====   XMicroDrone - Controlleur Gumstix  =====");
 	printf("\n================================================");
 	printf("\n");
 

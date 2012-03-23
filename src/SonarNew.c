@@ -6,6 +6,8 @@
 #include <fcntl.h> // Pour le flag NON_BLOCK
 #include <stdio.h>
 #include <time.h>
+#include <sys/time.h>
+
 int atoi(const char * str);
 float atof(const char * str);
 void close(int id);
@@ -34,6 +36,7 @@ float dernieresAltitudes[32]; // >= DUREE_MOYENNAGE_ALTITUDE
 int LectureSonarEnCours;
 
 struct timeval datationSonar;
+long long int dateSonar=0;
 long long int endTimeSonar=0;
 long long int startTimeSonar=0;
 //
@@ -77,8 +80,6 @@ void lireTrameSonar() {
 	if (NouvelleTrameSonar) {
 		erreursSonar++;
 	}
-	gettimeofday(&datationSonar,NULL);
-	startTimeSonar=datationSonar.tv_sec *1000000 + (datationSonar.tv_usec);
 	ret=I2C_Envoyer_Lecture_Sonar();
 	if (ret==-1) {
 		return;
@@ -88,7 +89,7 @@ void lireTrameSonar() {
 		if (DEBUG_SONAR==1)	printf("Altitude Instantanée %i:\n",alti);
 	}
 	gettimeofday(&datationSonar,NULL);
-	endTimeSonar=datationSonar.tv_sec *1000000 + (datationSonar.tv_usec);
+	dateSonar=datationSonar.tv_sec *1000000 + (datationSonar.tv_usec);
 	//printf("\n Temps de lecture: %lli \n",endTimeSonar-startTimeSonar);
 	// 
 	// Saut maxi: MAX_SONAR_JUMP 
@@ -140,12 +141,14 @@ void lireTrameSonar() {
 				PosLRTA[3] += dernieresAltitudes[i];
 			}
 			PosLRTA[3] /= (float)DUREE_MOYENNAGE_ALTITUDE;
+			HistPosLRTA[3][indexBufferHistoriqueA] = PosLRTA[3];
 			//PosLRTA[3] -= SONAR_ALTI_MINI; // pourquoi faire ca?
 			if (DEBUG_SONAR==1) printf("Altitude filtrée: %f\n",PosLRTA[3]);
 			if (derniereAltitudeMoyenneEstValable) {
 				// Obtention de la vitesse par dérivation sur les 2 dernieres moyennes
-				VitLRTA[3] = INVERSE_INTERVALLE_TEMPS_DERIVATION_SONAR //TODO Vérifier cette constante On SAIT qu'on a un résultat sonar toute les "tant" ms
+				VitLRTA[3] = INVERSE_INTERVALLE_TEMPS_DERIVATION_SONAR //TODO Vérifier cette constante On SAIT qu'on a un résultat sonar toute les "tant" ms. Ou alors on le datera
 						* (PosLRTA[3] - derniereAltitudeMoyenne);
+				HistVitLRTA[3][indexBufferHistoriqueA] = VitLRTA[3];
 			} else {
 				VitLRTA[3] = 0.0F;
 			}
@@ -161,7 +164,9 @@ void lireTrameSonar() {
 			VitLRTA[3] = 0.0;
 		}
 	}
-	//dateTrameSonar=datation.tv_sec *1e6 + (datation.tv_usec);
+	DatePosA[indexBufferHistoriqueA]=dateSonar;
+	indexBufferHistoriqueA++;
+	if(indexBufferHistoriqueA==10) indexBufferHistoriqueA=0;
 	I2C_Envoyer_Pulse_Sonar();
 	NouvelleTrameSonar = 1;
 }

@@ -237,7 +237,12 @@ void* CommWiFi(void* data) {
 	
 		close(new_fd); 	// terminate the cnx
 		printf("\nWIFI: Cnx terminated !");
-		//state = -1; //Arret d'urgence! car plus de cnx, délicat si l'ordre était important
+		//state = -1;
+		//On remet les consignes à zero
+		PosLRTA[0]=0;
+		PosLRTA[1]=0;
+		PosLRTA[2]=0;
+		PosLRTA[3]=0;
 		printf("\nWIFI: waiting for connections on port %s...\n", PORT); //on attend une nouvelle connection
 
 		if (termine) {

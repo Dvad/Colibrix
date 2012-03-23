@@ -113,7 +113,23 @@ float Acc[3];
 float Vit[3];
 float Pos[3];
 
+//
+//Et l'historique daté [i][j] i= {L,R,T,A} j= position dans  buffer
+//
+int indexBufferHistoriqueLRT;
+int indexBufferHistoriqueA;
+float HistPosLRTA[4][10];
+float HistVitLRTA[4][10];
+float HistConsLRTA[4][10];
+
+long long int DatePosLRT[10];
+long long int DateVitLRT[10];
+
+long long int DatePosA[10];
+long long int DateVitA[10];
+
 int trameRate;
+
 int MAX_WAIT_BEF_SEND;
 int ROTATION_MAXI; // <= 255 pour garantir le protocole I2C
 int ROTATION_LENTE; // La vitesse de rotation pour les tests & co

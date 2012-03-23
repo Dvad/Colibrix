@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdint.h> //pour size_t
+#include <sys/time.h>
 
 
 typedef unsigned int size_t;
@@ -61,6 +62,10 @@ float zeroPosLRT[3];
  float AltitudeBaro;
  
 
+
+//Datation
+struct timeval datationCentrale;
+long long int dateCentrale;
 
 
 
@@ -305,7 +310,8 @@ void readFrame() {
 		ancTempsPic = tempsPic;
 	}
 	
-
+	gettimeofday(&datationCentrale,NULL);
+	dateCentrale=datationCentrale.tv_sec *1000000 + (datationCentrale.tv_usec);
 	//
 	// Vérifions si des trames ont été ratées
 	//
@@ -349,8 +355,14 @@ void readFrame() {
 	//--Angles (L,R,T)
 	//
 	PosLRTA[0] = -getFloatAtOffset(82);
-	PosLRTA[2] = +getFloatAtOffset(82 + 8); // -getFloatAtOffset(82 + 8); avant retournenment de la centrale
+	PosLRTA[2] = +getFloatAtOffset(82 + 8); // avec l'axe X de la central dirigé vers 1, Y vers 4
 	PosLRTA[1] = -getFloatAtOffset(82 + 16); // idem
+
+	HistPosLRTA[0][indexBufferHistoriqueLRT]=PosLRTA[0];
+	HistPosLRTA[1][indexBufferHistoriqueLRT]=PosLRTA[1];
+	HistPosLRTA[2][indexBufferHistoriqueLRT]=PosLRTA[2];
+	DatePosLRT[indexBufferHistoriqueLRT]=dateCentrale;
+
 
 	for (i = 0; i < 3; i++) {
 		//--Recentrage
@@ -380,6 +392,10 @@ void readFrame() {
 			VitLRTA[i] = 0.5F * (ancVitLRT[i] + insVitLRT[i]);
 		}
 		ancLRT[i] = PosLRTA[i];
+		HistVitLRTA[0][indexBufferHistoriqueLRT]=PosLRTA[0];
+		HistVitLRTA[1][indexBufferHistoriqueLRT]=PosLRTA[1];
+		HistVitLRTA[2][indexBufferHistoriqueLRT]=PosLRTA[2];
+		DateVitLRT[indexBufferHistoriqueLRT]=dateCentrale; //Quelque chose de plus précis?
 	}
 
 	//
@@ -443,11 +459,19 @@ void readFrame() {
 	 }
 	 TempsGPS = (float)tempLong;
 	 }*/
+	 //
+	 //On incrémente l'index du buffer pour l'historique
+	 //
+	 indexBufferHistoriqueLRT++;
+	 if(indexBufferHistoriqueLRT==10){
+		 indexBufferHistoriqueLRT=0;
+	 }
 
-	//
-	// La trame est dispo !
-	//
-	NouvelleTrameCentrale = 1;
+	 //
+	 // La trame est dispo !
+	 //
+
+	 NouvelleTrameCentrale = 1;
 }
 
 
