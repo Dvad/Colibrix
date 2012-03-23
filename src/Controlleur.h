@@ -8,5 +8,5 @@ void Controlleur_Termine();
 void Controlleur_PrintCmd();
 int Controlleur_VMoyen();
 
-
+int Test_Moteur();
 #endif /*CONTROLLEUR_H_*/

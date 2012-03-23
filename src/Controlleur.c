@@ -192,7 +192,7 @@ int Controlleur_VMoyen() {
 }
 
 void Controlleur_PrintCmd() {
-	printf(" Comm: %4i  %4i  %4i  %4i", commandeNumerique[0],
+	printf(" Comm: %4i  %4i  %4i  %4i \n", commandeNumerique[0],
 			commandeNumerique[1], commandeNumerique[2], commandeNumerique[3]);
 }
 

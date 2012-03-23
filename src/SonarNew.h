@@ -3,7 +3,7 @@
 
 
 void lireTrameSonar();
-void Sonar_Initialise(int dev);
+void Sonar_Initialise();
 
 
 #endif /*SONAR_H_*/

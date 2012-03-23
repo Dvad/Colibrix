@@ -109,6 +109,9 @@ float VEqui;           // La commande moteur d'équilibre
 float Vactu;
 int state;
 float AltitudeBaro;
+float Acc[3];
+float Vit[3];
+float Pos[3];
 
 int trameRate;
 int MAX_WAIT_BEF_SEND;
@@ -121,6 +124,9 @@ int CENTRALE_IRQ;
 int DUREE_MOYENNAGE_ALTITUDE;
 int DUREE_MOYENNAGE_BARO;
 
+//struct timeval datation;
+long long int dateTrameSonar;
+long long int dateTrameCentrale;
 //
 // Paramétres
 //

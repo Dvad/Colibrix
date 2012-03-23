@@ -24,8 +24,8 @@ int read(int id, unsigned char* buf, int length);
 //
 // Variables statiques de la centrale
 //
-unsigned char bufferCircuCentrale[1024]; // >= CENTRALE_TAILLE_BUFFER
-unsigned char bufferPortCentrale[1024];  // > 3 * CENTRALE_TAILLE_TRAME
+unsigned char bufferCircuCentrale[2048]; // >= CENTRALE_TAILLE_BUFFER
+unsigned char bufferPortCentrale[2048];  // > 3 * CENTRALE_TAILLE_TRAME
 int fdCentrale;
 int indexLectureCentrale;
 int indexEcritureCentrale;
@@ -68,26 +68,8 @@ float zeroPosLRT[3];
 
 
 
-void Centrale_Initialise() {
+int Centrale_Initialise() {
 	char* adresse="/dev/ttyO0";
-	printf("Création serveur centrale...\n");
-	//ATTENTION S'ASSURER AU BOOT QUE TOUT EST BIEN CONFIGURER AVEC STTY
-	//stty 460800 cstopb</dev/ttyO0 bauds
-	if(adresse==NULL){
-		printf("Veuillez fournir l'adresse de la centrale en argument");
-		return;
-	}
-	//On choisit l'adresse qu'on hardcodera une fois détérminé
-
-	printf("Device centrale: %s\n", adresse);
-	printf("Ouverture port centrale...");
-	fdCentrale = open(adresse, O_RDONLY );//| O_NONBLOCK | O_NOCTTY); // O_RDWR // En vision datation il faudra la rendre bloquante!
-	if (fdCentrale != NULL){
-		printf(" OK\n");
-	}
-	else{
-		printf("Erreur lors de l'ouverture du port centrale");
-	}
 	indexEcritureCentrale = 0;
 	indexLectureCentrale = 0;
 	donneesDisponibles = 0;
@@ -101,6 +83,23 @@ void Centrale_Initialise() {
 	for(i = 0; i < 3; i++) {
 		ancVitLRT[i] = 0;
 	}
+	printf("Création serveur centrale...\n");
+	//ATTENTION S'ASSURER AU BOOT QUE TOUT EST BIEN CONFIGURER AVEC STTY
+	//stty 460800 raw cstopb -ixon -ixoff </dev/ttyO0 bauds
+	printf("Device centrale: %s\n", adresse);
+	printf("Ouverture port centrale...");
+	fdCentrale = open(adresse, O_RDONLY );//| O_NONBLOCK | O_NOCTTY); // O_RDWR // En vision datation il faudra la rendre bloquante!
+	ret = read(fdCentrale, bufferPortCentrale, BUF_CTR * CENTRALE_TAILLE_TRAME);
+	if (ret>0){
+		printf(" OK\n");
+		return 0;
+	}
+	else{
+		printf("\n <<<Erreur lors de l'ouverture du port centrale>>>\n");
+		Misc_WaitEnter();
+		return -1;
+	}
+
 }
 
 void Centrale_Termine() {
@@ -350,8 +349,8 @@ void readFrame() {
 	//--Angles (L,R,T)
 	//
 	PosLRTA[0] = -getFloatAtOffset(82);
-	PosLRTA[2] = -getFloatAtOffset(82 + 8);
-	PosLRTA[1] = +getFloatAtOffset(82 + 16);
+	PosLRTA[2] = +getFloatAtOffset(82 + 8); // -getFloatAtOffset(82 + 8); avant retournenment de la centrale
+	PosLRTA[1] = -getFloatAtOffset(82 + 16); // idem
 
 	for (i = 0; i < 3; i++) {
 		//--Recentrage
@@ -386,17 +385,17 @@ void readFrame() {
 	//
 	// Accéléros
 	//
-	/*
+
 	 for (i = 0; i < 3; i++) {
-	 Acc[i] = getFloatAtOffset(34 + i * 8) - CorAcc[i];
+	 Acc[i] = getFloatAtOffset(34 + i * 8); //- CorAcc[i];
 	 Vit[i] += IntervalleTemps * Acc[i];
 	 Pos[i] += IntervalleTemps * Vit[i];
-	 }*/
+	 }
 
 	//
 	//--Baro
 	//
-	/*
+/*
 	 long tempLong = 265L * bufferCircuCentrale[(indexLectureCentrale + 162) % CENTRALE_TAILLE_BUFFER];
 	 tempLong += bufferCircuCentrale[(indexLectureCentrale + 162 + 1) % CENTRALE_TAILLE_BUFFER];
 	 histAltBaro[indexHistBaro] = 44330.7692308 * (1 - pow(((((float)tempLong) / 10) / 1013.25), 0.1901976));
@@ -411,8 +410,8 @@ void readFrame() {
 	 }
 	 AltitudeBaro /= (float)DUREE_MOYENNAGE_BARO;
 	 AltitudeBaro -= zeroBaro;
-	 */
 
+*/
 	//if (Params.GET_GPS_VALUES) {
 	/*
 
@@ -463,7 +462,7 @@ float getFloatAtOffset(int offset) {
 	for (i = 0; i < 4; i++) {
 		//tempEightBytes[i] = bufferCircuCentrale[(indexLectureCentrale + offset + i + 4) % CENTRALE_TAILLE_BUFFER];
 		//tempEightBytes[i+4] = bufferCircuCentrale[(indexLectureCentrale + offset + i) % CENTRALE_TAILLE_BUFFER];
-		//devient donc (David
+		//devient donc (David)
 		tempEightBytes[i] = bufferCircuCentrale[(indexLectureCentrale + offset + i) % CENTRALE_TAILLE_BUFFER];
 		tempEightBytes[i+4] = bufferCircuCentrale[(indexLectureCentrale + offset + i + 4) % CENTRALE_TAILLE_BUFFER];
 	}
