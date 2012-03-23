@@ -11,7 +11,8 @@ float ancLRTA[4]; // Pour l'intégration
 float intLRTA[4]; // Valeur des intégrales
 float histURT[5 + 1][2]; // TODO: Taille de tableau non dynamique. TEMPS_DE_REACTION + 1, 2
 int indexHistorique; // Pour se repérer dans le tableau historique
-
+//long long int dateSonarAnc;
+//long long int dateSonar;
 float CPL; // Termes de conversions de la commande unité SI en commande moteur
 float CPR;
 float CPT;

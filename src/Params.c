@@ -36,10 +36,10 @@ void Params_Initialise()
 
 	DUREE_MOYENNAGE_ALTITUDE = 4; // En unité de pas sonar (50ms) | 10==0.5s
 	VERIFICATION_INPUT_CONSOLE_TOUT_LES = 20; // 20 <=> 100/20 = 5 Hz
-	TEST_SONAR_TOUT_LES = 1; // En nombre de trame. freq centrale = 100, freq sonar = 20 => tout les 5
+	TEST_SONAR_TOUT_LES = 5; // En nombre de trame. freq centrale = 100, freq sonar = 20 => tout les 5
 	SONAR_IRQ = 300; // 0 (hardware), 200, 300, 400
 	CENTRALE_IRQ = 300; // 0 (hardware), 200, 300, 400
-	BUF_CTR = 2; // 1 ou 2, en facteur de la taille buffer
+	BUF_CTR = 3; // 1 ou 2, en facteur de la taille buffer
 		
 	
 	
@@ -105,8 +105,8 @@ void Params_Initialise()
 	
 	// Les deux valeurs suivantes sont en protocoles I2C !!!
 	// Il y a un facteur 10: Ci2c = 0.1 * Creel
-	ROTATION_MAXI = 200; // <= 255 pour garantir le protocole I2C
-	ROTATION_LENTE = 15; // La vitesse de rotation pour les tests & co
+	ROTATION_MAXI = 230; // <= 255 pour garantir le protocole I2C
+	ROTATION_LENTE = 3; // La vitesse de rotation pour les tests & co
 				
 	RAMPE_ROTATION = 700; // La rampe d'accélération de rotation des moteurs en tr/s^2.
 	RAMPE_DESCENTE = 0.2F; // m/s^2

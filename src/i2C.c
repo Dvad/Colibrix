@@ -91,16 +91,12 @@ int I2C_Envoyer_Commande_Moteur(int moteur, unsigned char commande[1]){
 int I2C_Envoyer_Commande_Tout_Moteur(unsigned char commande[4]){
 	ioctl(fdc, I2C_SLAVE, 0x29);
 	write(fdc, &commande[0], 1);
-
 	ioctl(fdc, I2C_SLAVE, 0x2A);
 	write(fdc, &commande[1], 1);
-
 	ioctl(fdc, I2C_SLAVE, 0x2B);
 	write(fdc, &commande[2], 1);
-
 	ioctl(fdc, I2C_SLAVE, 0x2C);
 	write(fdc, &commande[3], 1);
-
 	return 0;
 }
 
@@ -157,7 +153,7 @@ int I2C_Envoyer_Lecture_Sonar(){
 	// Pour sélectionner le registre
 	//
 	wbuf[0] = 0x02	;//Registre qui servira de début de lecture!
-	m[0].len = 1;//2 byte write
+	m[0].len = 1;//1 byte write
 	m[0].flags = 0;
 	m[0].addr = 0x70;//slave addr
 	m[0].buf = wbuf;//write buffer

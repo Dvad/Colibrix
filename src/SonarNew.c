@@ -1,11 +1,11 @@
 #include "Params.h"
 #include "Misc.h"
-#include "Sonar.h"
+#include "SonarNew.h"
 #include "i2C.h"
 #include <errno.h> // gestion minimale des erreurs
 #include <fcntl.h> // Pour le flag NON_BLOCK
 #include <stdio.h>
-
+#include <time.h>
 int atoi(const char * str);
 float atof(const char * str);
 void close(int id);
@@ -33,16 +33,18 @@ float derniereAltitudeMoyenne;
 float dernieresAltitudes[32]; // >= DUREE_MOYENNAGE_ALTITUDE
 int LectureSonarEnCours;
 
+struct timeval datationSonar;
+long long int endTimeSonar=0;
+long long int startTimeSonar=0;
 //
-// Variables prédéclarés pour éviter les temps d'allocation, elles sont initialisé avant chaque utilisation
+// Variables prédéclarés pour éviter les temps d'allocation, elles sont initialisées avant chaque utilisation
 //
 int alti;
 char valChar[4]; // Stocke temporairement la valeur sous forme char
 int ret;
 int donneesDisponibles;
 int ancAlti;
-
-void Sonar_Initialise(int dev) {
+void Sonar_Initialise() {
 
 	indexEcritureSonar = 0;
 	indexLectureSonar = 0;
@@ -75,15 +77,19 @@ void lireTrameSonar() {
 	if (NouvelleTrameSonar) {
 		erreursSonar++;
 	}
+	gettimeofday(&datationSonar,NULL);
+	startTimeSonar=datationSonar.tv_sec *1000000 + (datationSonar.tv_usec);
 	ret=I2C_Envoyer_Lecture_Sonar();
 	if (ret==-1) {
 		return;
 	}
 	else {
 		alti = ret; //alti est en centimètre pour le garder en int!
-		if (DEBUG_SONAR==1)	printf("AltitudeInstantanée %i:\n",alti);
+		if (DEBUG_SONAR==1)	printf("Altitude Instantanée %i:\n",alti);
 	}
-
+	gettimeofday(&datationSonar,NULL);
+	endTimeSonar=datationSonar.tv_sec *1000000 + (datationSonar.tv_usec);
+	//printf("\n Temps de lecture: %lli \n",endTimeSonar-startTimeSonar);
 	// 
 	// Saut maxi: MAX_SONAR_JUMP 
 	//	
@@ -134,7 +140,7 @@ void lireTrameSonar() {
 				PosLRTA[3] += dernieresAltitudes[i];
 			}
 			PosLRTA[3] /= (float)DUREE_MOYENNAGE_ALTITUDE;
-			//PosLRTA[3] -= SONAR_ALTI_MINI;//TODO pourquoi faire ca?
+			//PosLRTA[3] -= SONAR_ALTI_MINI; // pourquoi faire ca?
 			if (DEBUG_SONAR==1) printf("Altitude filtrée: %f\n",PosLRTA[3]);
 			if (derniereAltitudeMoyenneEstValable) {
 				// Obtention de la vitesse par dérivation sur les 2 dernieres moyennes
@@ -155,6 +161,7 @@ void lireTrameSonar() {
 			VitLRTA[3] = 0.0;
 		}
 	}
+	//dateTrameSonar=datation.tv_sec *1e6 + (datation.tv_usec);
 	I2C_Envoyer_Pulse_Sonar();
 	NouvelleTrameSonar = 1;
 }
